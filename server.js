@@ -6,6 +6,10 @@
  */
  
 
+// 파일분할 꼭 할것.
+
+
+
  const express = require('express');
  const bodyParser = require('body-parser'); 
  const server = express();
@@ -17,24 +21,7 @@
  server.use(express.json())
 
 
-var con = mysql.createConnection({
-    host : '127.0.0.1',
-    user : 'root',
-    port : '3306',
-    password : 'webkh141303!',
-    database : 'ConnectHighShcem'
-})
-
-con.connect( err=>
-    { if (err) console.log("MySQL 연결 실패 : ", err);
-console.log("MySQL Connected!!!");});
-
-server.listen(3000, () => {
-    console.log("!!server is running!!");
-}) 
-
-
-
+var con = require('./dbConfig.js');
 
 const users = [
     {
@@ -49,37 +36,148 @@ const users = [
     }
  ]
 
+ //회원가입 코드
  server.post('/api/create', function (req, res, next) {
-    var userId = req.body['id'];
-    var userPw = req.body['name'];
-    var userPwRe = req.body['email'];
-    con.query('insert into userdata values(?,?,?);', [userId, userPw,userPwRe], function (err, rows, fields) {
-        if (!err) {
-            res.send('success');
-        } else {
+    const userId = req.body['id'];
+    const userPw = req.body['pw'];
+    const userNickName = req.body['nickName'];
+    const userName = req.body['name'];
+    const userSchoolName = req.body['schoolName'];
+    const userSchoolCode = req.body['schoolCode'];
+    const userIsAdmin = req.body['isAdmin'];
+    const userIsCertificated = req.body['isCertificated'];
+    const userCreatedTime = req.body['createTime'];
+    const userPostCount = req.body['postCount'];
+    const userReplCount = req.body['replCount'];
+    const userEmail = req.body['email'];
 
-            res.send('err : ' + err);
+    con.query('insert into user values(?,?,?,?,?,?,?,?,?,?,?,?);', [userId, userPw, userNickName, userName, userSchoolName,
+         userSchoolCode, userIsAdmin, userIsCertificated, userCreatedTime, userReplCount, userPostCount, userEmail], function (err, rows, fields) {
+        if (!err) {
+            res.send(req.body);
+        }else {
+            res.send('err 발생');
         }
     });
-  
 });
 
+//id, nickname 중복체크
+server.post('/api/create/checkIDdupl', function (req, res, next) {
+    const userId = req.body['id'];
+    console.log(userId);
+    con.query('select EXISTS (select id from user where id = ?) as success;', [userId], function (err, rows, fields) {
+        if (!err) {
+            if(rows[0].success == 0)
+            {
+                console.log(rows)
+                res.send('can use');
+            }
+            else {
+                res.send('cannot use');    
+            }
+        }else {
+            res.send('err 발생');
+        }
+    });
+});
+server.post('/api/create/checkNickNamedupl', function (req, res, next) {
+    const userNickName = req.body['nickName'];
+    console.log(userNickName);
+    con.query('select EXISTS (select nickName from user where nickName = ?) as success;', [userNickName], function (err, rows, fields) {
+        if (!err) {
+            if(rows[0].success == 0)
+            {
+                console.log(rows)
+                res.send('can use');
+            }
+            else {
+                res.send('cannot use');    
+            }
+        }else {
+            res.send('err 발생');
+        }
+    });
+});
+
+server.listen(3000, () => {
+    console.log("!!server is running!!");
+}) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  server.get('/api/user',(req,res) => {
-    res.json(users);
+    con.query('select * from userdata', function(err, row, fields) {
+        res.json(row);    
+    })
  }) 
 
-
- server.get('/api/user/:id', (req,res) => {
-     console.log(req.params.id)
-     const user = users.find((u)=>{
-        return u.id === req.params.id;
+ server.get('/api/user/user_login/:id', (req,res) => {
+     var userID = req.body.id;
+     var userPW = req.body.name;
+     con.query('select * from userdata where id = ?', [userID], function(err, row, fields) {
+        if(!err){
+            console.log(row)    
+            res.json(row)
+        }
+        else{
+            res.json("faild")
+        }
      })
-     if(user) {
-        res.json(user);
-     }
-     else {
-        res.status(404).json({errorMessage:"user was not found"})
-     }
+     console.log(req.params.id)
+
+    
  })
 
 
