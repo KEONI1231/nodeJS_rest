@@ -99,6 +99,13 @@ server.post('/api/create/checkNickNamedupl', function (req, res, next) {
     });
 });
 
+server.get('/api/user',(req,res) => {
+    con.query('select * from user', function(err, row, fields) {
+        console.log(row)
+        res.json('sdaf');    
+    })
+ }) 
+
 server.listen(3000, () => {
     console.log("!!server is running!!");
 }) 
@@ -156,13 +163,7 @@ server.listen(3000, () => {
 
 
 
-
- server.get('/api/user',(req,res) => {
-    con.query('select * from userdata', function(err, row, fields) {
-        res.json(row);    
-    })
- }) 
-
+/*
  server.get('/api/user/user_login/:id', (req,res) => {
      var userID = req.body.id;
      var userPW = req.body.name;
@@ -206,3 +207,4 @@ server.delete('/api/user/:id',(req,res) => {
         res.json(foundUser[0]);
     }
 })
+*/
