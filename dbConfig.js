@@ -6,6 +6,11 @@ const db = mysql.createConnection({
     password : "webkh141303!",
     database : "connecthighshcem"
 })
+
+
+
+
+
 db.connect( err=>
     { if (err) console.log("MySQL 연결 실패 : ", err);
 console.log("MySQL Connected!!!");});
