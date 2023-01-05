@@ -21,8 +21,8 @@
  server.use(express.json())
 
 
- 
-var con = require('./dbConfig.js');
+
+var con = require('./dbConfig/dbConfig.js');
 
 const users = [
     {
