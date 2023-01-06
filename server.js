@@ -38,7 +38,7 @@ const users = [
  ]
 
  //회원가입 코드
- server.post('/api/create', function (req, res, next) {
+ server.post('/api/user/create', function (req, res, next) {
     const userId = req.body['id'];
     const userPw = req.body['pw'];
     const userNickName = req.body['nickName'];
@@ -63,7 +63,7 @@ const users = [
 });
 
 //id, nickname 중복체크
-server.post('/api/create/checkIDdupl', function (req, res, next) {
+server.post('/api/user/create/checkIDdupl', function (req, res, next) {
     const userId = req.body['id'];
     console.log(userId);
     con.query('select EXISTS (select id from user where id = ?) as success;', [userId], function (err, rows, fields) {
@@ -81,7 +81,7 @@ server.post('/api/create/checkIDdupl', function (req, res, next) {
         }
     });
 });
-server.post('/api/create/checkNickNamedupl', function (req, res, next) {
+server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
     const userNickName = req.body['nickName'];
     console.log(userNickName);
     con.query('select EXISTS (select nickName from user where nickName = ?) as success;', [userNickName], function (err, rows, fields) {
@@ -100,67 +100,15 @@ server.post('/api/create/checkNickNamedupl', function (req, res, next) {
     });
 });
 
-server.get('/api/user',(req,res) => {
-    con.query('select * from user', function(err, row, fields) {
-        console.log(row)
-        res.json('sdaf');    
-    })
- }) 
-
+//로그인 부분
+server.post('api/user/login/:id', function (req,res, next) {
+    var userID = req.body.id;
+    var userPW = req.body.pw;
+    
+})
 server.listen(3000, () => {
     console.log("!!server is running!!");
 }) 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
