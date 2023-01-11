@@ -23,6 +23,7 @@
 
 
 var con = require('./dbConfig/dbConfig.js');
+const { query } = require('express');
 
 const users = [
     {
@@ -65,12 +66,10 @@ const users = [
 //id, nickname 중복체크
 server.post('/api/user/create/checkIDdupl', function (req, res, next) {
     const userId = req.body['id'];
-    console.log(userId);
     con.query('select EXISTS (select id from user where id = ?) as success;', [userId], function (err, rows, fields) {
         if (!err) {
             if(rows[0].success == 0)
             {
-                console.log(rows)
                 res.send('can use');
             }
             else {
@@ -83,12 +82,10 @@ server.post('/api/user/create/checkIDdupl', function (req, res, next) {
 });
 server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
     const userNickName = req.body['nickName'];
-    console.log(userNickName);
     con.query('select EXISTS (select nickName from user where nickName = ?) as success;', [userNickName], function (err, rows, fields) {
         if (!err) {
             if(rows[0].success == 0)
             {
-                console.log(rows)
                 res.send('can use');
             }
             else {
@@ -100,12 +97,41 @@ server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
     });
 });
 
-//로그인 부분
-server.post('api/user/login/:id', function (req,res, next) {
+//로그인 부분 //토큰은 아직
+server.post('/user/login/', function (req,res, next) {
+    
+    console.log("asdef")
     var userID = req.body.id;
     var userPW = req.body.pw;
-    
+    con.query('select * from user where id = ? and pw = ?;', [userID,userPW], function(err,rows,fields) {
+        if(!err) {
+            const userdata = 
+                {
+                    id : rows[0].id,
+                    nickName : rows[0].nickName,
+                    name : rows[0].name,
+                    schoolCode : rows[0].schoolCode,
+                    schoolName : rows[0].schoolName,
+                    isAdmin : rows[0].isAdmin,
+                    isCertificated : rows[0].isCertificate,
+                    createTime : rows[0].createTime,
+                    replCount : rows[0].replCount,
+                    postCount : rows[0].postCount,
+                    email : rows[0].email
+                }
+            
+            console.log(rows[0])
+            res.send(userdata);
+        }
+        else {
+            console.log(rows[0])
+            res.send('err 발생');
+        }
+    })    
 })
+
+
+
 server.listen(3000, () => {
     console.log("!!server is running!!");
 }) 
