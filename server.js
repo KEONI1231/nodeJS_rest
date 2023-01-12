@@ -8,24 +8,20 @@
 
 // 파일분할 꼭 할것.
 
-
-
  const express = require('express');
  const bodyParser = require('body-parser'); 
  const server = express();
  const mysql = require('mysql');
  const path = require('path');
-
  server.use(bodyParser.json());
  server.use(bodyParser.urlencoded({extended: true}));
  server.use(express.json())
 
+ var con = require('./dbConfig/dbConfig.js');
+ const { query } = require('express');
+ const e = require('express');
 
-
-var con = require('./dbConfig/dbConfig.js');
-const { query } = require('express');
-
-const users = [
+ const users = [
     {
         id : '1234',
         name : 'keoni',
@@ -121,7 +117,6 @@ server.post('/user/login/', function (req,res, next) {
                     }
                 res.send(userdata);
                 })
-                
             }
             else {
                 res.send('no user info')
@@ -133,8 +128,85 @@ server.post('/user/login/', function (req,res, next) {
     })    
 })
 
+//게시글 작성
+//req에서 받은 게시클 타입에 따라 타이블에 자동 생성.
+server.post('/create/board/post', function (req, res, next) {
+    const boardType = req.body['boardType'];
+    const userAnonyCheck = req.body['anonyCheck'];
+    const writerId = req.body['id'];
+    const boardTitle = req.body['boardTitle'];
+    const boardContent = req.body['boardContent'];
+    const createTime = req.body['createTime'];
+    const schoolName = req.body['schoolName'];
+    con.query('insert into '+boardType+' values(?,?,?,?,?,?,?,?,?);', [boardTitle,boardContent,writerId,0,0,null,createTime,schoolName,userAnonyCheck], function (err, rows, fields) {
+        if (!err) {
+            con.query('select * from free_board;',function(err, rows, filed) {
+                if(!err) {
+                    res.json('success');
+                }
+                else {
+                    res.send('err 발생');
+                }
+            })
+        }else {
+            console.log(err);
+            res.send('err 발생');
+        }
+    });
+});
+//자유 게시판 전체 글 조회
+server.get('/Get/board/post', function(req, res, next) {
+    con.query('select * from free_board;',function(err,rows,filed) {
+        if(!err) {
+            res.json(rows);
+        }
+        else {
+            res.send('err 발생');
+        }
+    })
+})
 
-
+//자유게시판 특정 게시판 클릭 조회. (게시글 내용 + 댓글 정보들)
+//댓글과 함께 보여줘여함.
+//조인 연산 + 게시글 좋아요 + 댓글 좋아요
+server.get('/Get/board/post/:postId', function(req, res, next) {
+    const postId = req.params.postId;
+    console.log(postId)
+    con.query('select * from free_board_repl where post_id = ?',[postId], function(err,rows,fields) {
+        if(!err) {
+            res.send("success");
+            console.log(rows);
+        }
+        else {
+            console.log(err);
+            res.send('err 발생')
+        }
+    })
+})
+//게시글 댓글 작성
+server.post('/Post/board/repl/:postId', function(req,res,next) {
+    const replContent = req.body["replContent"];
+    const replWriterId = req.body["replWriterId"];
+    const repledTime = req.body["repledTime"];
+    const boardType = req.body["boardType"];
+    const postId = req.params.postId;
+    con.query('insert into '+boardType+'_repl'+' values(?,?,?,?,?,?);', [null,0,replContent,replWriterId,repledTime,postId], function (err, rows, fields) {
+        if (!err) {
+            con.query('select * from free_board;',function(err, rows, filed) {
+                if(!err) {
+                    res.json('success');
+                }
+                else {
+                    res.send('err 발생');
+                }
+            })
+            
+        }else {
+            console.log(err);
+            res.send('err 발생');
+        }
+    });  
+})
 server.listen(3000, () => {
     console.log("!!server is running!!");
 }) 
