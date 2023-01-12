@@ -99,32 +99,35 @@ server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
 
 //로그인 부분 //토큰은 아직
 server.post('/user/login/', function (req,res, next) {
-    
-    console.log("asdef")
     var userID = req.body.id;
     var userPW = req.body.pw;
-    con.query('select * from user where id = ? and pw = ?;', [userID,userPW], function(err,rows,fields) {
+    con.query('select EXISTS (select * from user where id = ? and pw = ?) as success;', [userID,userPW], function(err,rows,fields) {
         if(!err) {
-            const userdata = 
-                {
-                    id : rows[0].id,
-                    nickName : rows[0].nickName,
-                    name : rows[0].name,
-                    schoolCode : rows[0].schoolCode,
-                    schoolName : rows[0].schoolName,
-                    isAdmin : rows[0].isAdmin,
-                    isCertificated : rows[0].isCertificate,
-                    createTime : rows[0].createTime,
-                    replCount : rows[0].replCount,
-                    postCount : rows[0].postCount,
-                    email : rows[0].email
-                }
-            
-            console.log(rows[0])
-            res.send(userdata);
+            if(rows[0].success  != 0) {
+                con.query( 'select * from user where id = ? and pw = ?;',[userID,userPW],function(err, rows,fields) {
+                    const userdata = 
+                    {
+                        id : rows[0].id,
+                        nickName : rows[0].nickName,
+                        name : rows[0].name,
+                        schoolCode : rows[0].schoolCode,
+                        schoolName : rows[0].schoolName,
+                        isAdmin : rows[0].isAdmin,
+                        isCertificated : rows[0].isCertificate,
+                        createTime : rows[0].createTime,
+                        replCount : rows[0].replCount,
+                        postCount : rows[0].postCount,
+                        email : rows[0].email
+                    }
+                res.send(userdata);
+                })
+                
+            }
+            else {
+                res.send('no user info')
+            }
         }
         else {
-            console.log(rows[0])
             res.send('err 발생');
         }
     })    
