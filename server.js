@@ -94,7 +94,7 @@ server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
 });
 
 //로그인 부분 //토큰은 아직
-server.post('/user/login/', function (req,res, next) {
+server.post('/user/login', function (req,res, next) {
     var userID = req.body.id;
     var userPW = req.body.pw;
     con.query('select EXISTS (select * from user where id = ? and pw = ?) as success;', [userID,userPW], function(err,rows,fields) {
@@ -155,9 +155,11 @@ server.post('/create/board/post', function (req, res, next) {
     });
 });
 //자유 게시판 전체 글 조회
-server.get('/Get/board/post', function(req, res, next) {
-    con.query('select * from free_board;',function(err,rows,filed) {
+server.get('/Get/board/get:boardType', function(req, res, next) {
+    const boardType = req.params.boardType;
+    con.query('select * from '+boardType+';',function(err,rows,filed) {
         if(!err) {
+            console.log(rows);
             res.json(rows);
         }
         else {
@@ -174,7 +176,7 @@ server.get('/Get/board/post/:postId', function(req, res, next) {
     console.log(postId)
     con.query('select * from free_board_repl where post_id = ?',[postId], function(err,rows,fields) {
         if(!err) {
-            res.send("success");
+            res.send(rows);
             console.log(rows);
         }
         else {
@@ -185,7 +187,7 @@ server.get('/Get/board/post/:postId', function(req, res, next) {
 })
 //게시글 댓글 작성
 server.post('/Post/board/repl/:postId', function(req,res,next) {
-    const replContent = req.body["replContent"];
+    const replContent = req.body["replContent"]; 
     const replWriterId = req.body["replWriterId"];
     const repledTime = req.body["repledTime"];
     const boardType = req.body["boardType"];
@@ -200,16 +202,17 @@ server.post('/Post/board/repl/:postId', function(req,res,next) {
                     res.send('err 발생');
                 }
             })
-            
         }else {
             console.log(err);
             res.send('err 발생');
         }
     });  
 })
+
 server.listen(3000, () => {
     console.log("!!server is running!!");
 }) 
+
 
 
 
