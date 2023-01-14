@@ -149,7 +149,6 @@ server.post('/create/board/post', function (req, res, next) {
                 }
             })
         }else {
-            console.log(err);
             res.send('err 발생');
         }
     });
@@ -159,7 +158,6 @@ server.get('/Get/board/get:boardType', function(req, res, next) {
     const boardType = req.params.boardType;
     con.query('select * from '+boardType+';',function(err,rows,filed) {
         if(!err) {
-            console.log(rows);
             res.json(rows);
         }
         else {
@@ -170,7 +168,6 @@ server.get('/Get/board/get:boardType', function(req, res, next) {
 
 //자유게시판 특정 게시판 클릭 조회. (게시글 내용 + 댓글 정보들)
 //댓글과 함께 보여줘여함.
-//조인 연산 + 게시글 좋아요 + 댓글 좋아요
 server.get('/Get/board/post/:postId', function(req, res, next) {
     const postId = req.params.postId;
     console.log(postId)
@@ -180,7 +177,6 @@ server.get('/Get/board/post/:postId', function(req, res, next) {
             console.log(rows);
         }
         else {
-            console.log(err);
             res.send('err 발생')
         }
     })
@@ -203,13 +199,13 @@ server.post('/Post/board/repl/:postId', function(req,res,next) {
                 }
             })
         }else {
-            console.log(err);
             res.send('err 발생');
         }
     });  
 })
 
 //회원 정보 수정하기 전에 회원정보 인증
+//닉네임, 이메일
 server.post('/user/account/checker', function(req, res, next) {
     const userId = req.body['id']
     const userPw = req.body['pw']
@@ -225,6 +221,7 @@ server.post('/user/account/checker', function(req, res, next) {
 })
 
 //회원정보 수정 (비밀번호)
+//계정 인증 후 이상없음 비밀 번호 변경.
 server.put('/user/change/info/password', function(req, res, next) {
     const userId = req.body['id'];
     const userOldPw = req.body['oldPw'];
@@ -251,8 +248,51 @@ server.put('/user/change/info/password', function(req, res, next) {
     })
 })
 
-//회원정보 수정
-//이메일 변경전에 계정 확인
+//회원정보 수정 (닉네임)
+server.put('/user/change/info/nickName',function(req, res, next) {
+    const userOldNick = req.body['userOldNick']
+    const userNewNick = req.body['userNewNick']
+    con.query('select EXISTS (select * from user where nickName = "'+ userNewNick+'") as success;',function (err, rows,fields) {
+        if(!err) {
+            if(rows[0].success == 0) {
+                con.query('update user set nickName= "'+userNewNick+'" where nickName = "'+userOldNick+'";', function (err,rows,fields ) {
+                    if(!err) {
+                        res.send("success");
+                    }
+                    else {
+                        res.send("err 발생");
+                    }
+                })
+            }
+        }
+        else {
+            res.send('err 발생');
+        }
+    }) 
+})
+server.put('/user/change/info/email',function(req, res, next) {
+    const userOldEmail = req.body['userOldEmail']
+    const userNewEmail = req.body['userNewEmail']
+    const userId = req.body['userId']
+    con.query('select EXISTS (select * from user where nickName = "'+ userNewEmail+'" and id = "'+userId+'") as success;',function (err, rows,fields) {
+        if(!err) {
+            if(rows[0].success == 0) {
+                con.query('update user set email = "'+userNewEmail+'" where email = "'+userOldEmail+'" and id = "'+userId + '";', function (err,rows,fields ) {
+                    if(!err) {
+                        res.send("success");
+                    }
+                    else {
+                        res.send("err 발생");
+                    }
+                })
+            }
+        }
+        else {
+            //console.log(err);
+            res.send('err 발생');
+        }
+    }) 
+})
 
 server.listen(3000, () => {
     console.log("!!server is running!!");
