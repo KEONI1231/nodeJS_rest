@@ -209,6 +209,51 @@ server.post('/Post/board/repl/:postId', function(req,res,next) {
     });  
 })
 
+//회원 정보 수정하기 전에 회원정보 인증
+server.post('/user/account/checker', function(req, res, next) {
+    const userId = req.body['id']
+    const userPw = req.body['pw']
+    con.query('select EXISTS (select * from user where id = ? and pw = ?) as success;',[userId, userPw], function (err, rows, fields) {
+        if(!err) {
+            if(rows[0].success != 0) {
+                res.send("success");
+            }else {
+                res.send('no user info');
+            }
+        }
+    })
+})
+
+//회원정보 수정 (비밀번호)
+server.put('/user/change/info/password', function(req, res, next) {
+    const userId = req.body['id'];
+    const userOldPw = req.body['oldPw'];
+    const userNewPw = req.body['newPw'];
+    con.query('select EXISTS (select * from user where id = ? and pw = ?) as success;', [userId,userOldPw], function(err,rows,fields) {
+        if(!err) {
+            if(rows[0].success != 0) {
+                con.query('update user set pw= "'+userNewPw+'" where id = "'+userId+'";', function (err,rows,fields ) {
+                    if(!err) {
+                        res.send("success");
+                    }
+                    else {
+                        res.send("err 발생");
+                    }
+                })
+            }
+            else {
+                res.send("no user info")    
+            }
+        }
+        else {
+            res.send("no user info")
+        }
+    })
+})
+
+//회원정보 수정
+//이메일 변경전에 계정 확인
+
 server.listen(3000, () => {
     console.log("!!server is running!!");
 }) 
