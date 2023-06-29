@@ -36,21 +36,11 @@
 
  //회원가입 코드
  server.post('/api/user/create', function (req, res, next) {
-    const userId = req.body['id'];
-    const userPw = req.body['pw'];
-    const userNickName = req.body['nickName'];
-    const userName = req.body['name'];
-    const userSchoolName = req.body['schoolName'];
-    const userSchoolCode = req.body['schoolCode'];
-    const userIsAdmin = req.body['isAdmin'];
-    const userIsCertificated = req.body['isCertificated'];
-    const userCreatedTime = req.body['createTime'];
-    const userPostCount = req.body['postCount'];
-    const userReplCount = req.body['replCount'];
     const userEmail = req.body['email'];
+    const userPw = req.body['pw'];
+    const userName = req.body['name'];
 
-    con.query('insert into user values(?,?,?,?,?,?,?,?,?,?,?,?);', [userId, userPw, userNickName, userName, userSchoolName,
-         userSchoolCode, userIsAdmin, userIsCertificated, userCreatedTime, userReplCount, userPostCount, userEmail], function (err, rows, fields) {
+    con.query('insert into user values(?,?,?);', [userEmail, userPw, userName], function (err, rows, fields) {
         if (!err) {
             res.send(req.body);
         }else {
@@ -61,12 +51,12 @@
 
 //id, nickname 중복체크
 server.post('/api/user/create/checkIDdupl', function (req, res, next) {
-    const userId = req.body['id'];
-    con.query('select EXISTS (select id from user where id = ?) as success;', [userId], function (err, rows, fields) {
+    const userEmail = req.body['email'];
+    con.query('select EXISTS (select email from user where email = ?) as success;', [userEmail], function (err, rows, fields) {
         if (!err) {
             if(rows[0].success == 0)
             {
-                res.send('can use');
+                res.send('이메일이 중복되었습니다');
             }
             else {
                 res.send('cannot use');    
@@ -76,9 +66,9 @@ server.post('/api/user/create/checkIDdupl', function (req, res, next) {
         }
     });
 });
-server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
-    const userNickName = req.body['nickName'];
-    con.query('select EXISTS (select nickName from user where nickName = ?) as success;', [userNickName], function (err, rows, fields) {
+server.post('/api/user/create/checkNamedupl', function (req, res, next) {
+    const userName = req.body['name'];
+    con.query('select EXISTS (select name from user where nickName = ?) as success;', [userName], function (err, rows, fields) {
         if (!err) {
             if(rows[0].success == 0)
             {
@@ -95,25 +85,17 @@ server.post('/api/user/create/checkNickNamedupl', function (req, res, next) {
 
 //로그인 부분 //토큰은 아직
 server.post('/user/login', function (req,res, next) {
-    var userID = req.body.id;
+    var userEmail = req.body.email;
     var userPW = req.body.pw;
-    con.query('select EXISTS (select * from user where id = ? and pw = ?) as success;', [userID,userPW], function(err,rows,fields) {
+    con.query('select EXISTS (select * from user where email = ? and pw = ?) as success;', [userEmail,userPW], function(err,rows,fields) {
         if(!err) {
             if(rows[0].success  != 0) {
-                con.query( 'select * from user where id = ? and pw = ?;',[userID,userPW],function(err, rows,fields) {
+                con.query( 'select * from user where email = ? and pw = ?;',[userEmail,userPW],function(err, rows,fields) {
                     const userdata = 
                     {
-                        id : rows[0].id,
-                        nickName : rows[0].nickName,
+                        email : rows[0].email,
+                        pw : rows[0].pw,
                         name : rows[0].name,
-                        schoolCode : rows[0].schoolCode,
-                        schoolName : rows[0].schoolName,
-                        isAdmin : rows[0].isAdmin,
-                        isCertificated : rows[0].isCertificate,
-                        createTime : rows[0].createTime,
-                        replCount : rows[0].replCount,
-                        postCount : rows[0].postCount,
-                        email : rows[0].email
                     }
                 res.send(userdata);
                 })
@@ -138,7 +120,7 @@ server.post('/create/board/post', function (req, res, next) {
     const boardContent = req.body['boardContent'];
     const createTime = req.body['createTime'];
     const schoolName = req.body['schoolName'];
-    con.query('insert into '+boardType+' values(?,?,?,?,?,?,?,?,?);', [boardTitle,boardContent,writerId,0,0,null,createTime,schoolName,userAnonyCheck], function (err, rows, fields) {
+      con.query('insert into '+boardType+' values(?,?,?,?,?,?,?,?,?);', [boardTitle,boardContent,writerId,0,0,null,createTime,schoolName,userAnonyCheck], function (err, rows, fields) {
         if (!err) {
             con.query('select * from free_board;',function(err, rows, filed) {
                 if(!err) {
