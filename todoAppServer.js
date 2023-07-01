@@ -36,6 +36,20 @@ const users = [
   },
 ];
 
+server.post("api/test", function (req, res, next) {
+  const testString = req.body[test];
+  con.query(
+    "insert into test values(?",
+    [testString],
+    function (err, rows, fields) {
+      if (!err) {
+        res.send(req.body);
+      } else {
+        res.send("err 발생");
+      }
+    }
+  );
+});
 //회원가입 코드
 //회원가입 코드
 server.post("/api/user/create", function (req, res, next) {
