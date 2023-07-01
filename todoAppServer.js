@@ -21,6 +21,8 @@ var con = require("./dbConfig/dbConfig.js");
 const { query } = require("express");
 const e = require("express");
 console.log("asdf");
+console.log("asdf");
+console.log("asdf");
 const users = [
   {
     id: "1234",
@@ -35,19 +37,36 @@ const users = [
 ];
 
 //회원가입 코드
+//회원가입 코드
 server.post("/api/user/create", function (req, res, next) {
   const userEmail = req.body["email"];
   const userPw = req.body["pw"];
   const userName = req.body["name"];
 
   con.query(
-    "insert into user values(?,?,?);",
-    [userEmail, userPw, userName],
+    "select EXISTS (select email from user where email = ?) as success;",
+    [userEmail],
     function (err, rows, fields) {
       if (!err) {
-        res.send(req.body);
+        if (rows[0].success == 1) {
+          // 이메일이 이미 존재하면
+          res.send("이메일이 중복되었습니다.");
+        } else {
+          // 이메일이 존재하지 않으면
+          con.query(
+            "insert into user values(?,?,?);",
+            [userEmail, userName, userPw],
+            function (err, rows, fields) {
+              if (!err) {
+                res.send(req.body);
+              } else {
+                res.send("err 발생");
+              }
+            }
+          );
+        }
       } else {
-        res.send("err 발생");
+        res.send("이메일 확인 중 에러 발생");
       }
     }
   );
