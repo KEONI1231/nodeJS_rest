@@ -20,9 +20,11 @@ server.use(express.json());
 var con = require("./dbConfig/dbConfig.js");
 const { query } = require("express");
 const e = require("express");
-console.log("asdf");
-console.log("asdf");
-console.log("asdf");
+console.log("console message for test commit");
+console.log("console message for test commit");
+console.log("console message for test commit");
+console.log("console message for test commit");
+
 const users = [
   {
     id: "1234",
@@ -36,7 +38,7 @@ const users = [
   },
 ];
 
-server.post("api/test", function (req, res, next) {
+server.post("/api/test", function (req, res, next) {
   const testString = req.body[test];
   console.log(testString);
   con.query(
