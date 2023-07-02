@@ -38,8 +38,9 @@ const users = [
 
 server.post("api/test", function (req, res, next) {
   const testString = req.body[test];
+  console.log(testString);
   con.query(
-    "insert into test values(?",
+    "insert into test values(?);",
     [testString],
     function (err, rows, fields) {
       if (!err) {
