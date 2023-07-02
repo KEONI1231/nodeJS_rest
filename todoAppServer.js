@@ -20,11 +20,11 @@ server.use(express.json());
 var con = require("./dbConfig/dbConfig.js");
 const { query } = require("express");
 const e = require("express");
-console.log("console message for test commit");
-console.log("console message for test commit");
-console.log("console message for test commit");
-console.log("console message for test commit");
-console.log('commit test last')
+// console.log("console message for test commit");
+// console.log("console message for test commit");
+// console.log("console message for test commit");
+// console.log("console message for test commit");
+// console.log('commit test last')
 const users = [
   {
     id: "1234",
@@ -55,7 +55,7 @@ server.post("/api/test", function (req, res, next) {
 });
 //회원가입 코드
 //회원가입 코드
-server.post("/api/user/create", function (req, res, next) {
+server.post("/todoApp/user/create", function (req, res, next) {
   const userEmail = req.body["email"];
   const userPw = req.body["pw"];
   const userName = req.body["name"];
@@ -88,6 +88,42 @@ server.post("/api/user/create", function (req, res, next) {
     }
   );
 });
+//로그인 부분 //토큰은 아직
+server.post("/todoApp/user/login", function (req, res, next) {
+  var userEmail = req.body.email;
+  var userPW = req.body.pw;
+  con.query(
+    "select EXISTS (select * from user where email = ? and pw = ?) as success;",
+    [userEmail, userPW],
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows[0].success != 0) {
+          con.query(
+            "select * from user where email = ? and pw = ?;",
+            [userEmail, userPW],
+            function (err, rows, fields) {
+              const userdata = {
+                email: rows[0].email,
+                pw: rows[0].pw,
+                name: rows[0].name,
+              };
+              res.send(userdata);
+            }
+          );
+        } else {
+          res.send("no user info");
+        }
+      } else {
+        res.send("err 발생");
+      }
+    }
+  );
+});
+//일정 추가
+server.post('/todoApp/create/plan', function (req, res, next) {
+  
+  
+})
 
 //id, nickname 중복체크
 server.post("/api/user/create/checkIDdupl", function (req, res, next) {
@@ -127,37 +163,8 @@ server.post("/api/user/create/checkNamedupl", function (req, res, next) {
   );
 });
 
-//로그인 부분 //토큰은 아직
-server.post("/user/login", function (req, res, next) {
-  var userEmail = req.body.email;
-  var userPW = req.body.pw;
-  con.query(
-    "select EXISTS (select * from user where email = ? and pw = ?) as success;",
-    [userEmail, userPW],
-    function (err, rows, fields) {
-      if (!err) {
-        if (rows[0].success != 0) {
-          con.query(
-            "select * from user where email = ? and pw = ?;",
-            [userEmail, userPW],
-            function (err, rows, fields) {
-              const userdata = {
-                email: rows[0].email,
-                pw: rows[0].pw,
-                name: rows[0].name,
-              };
-              res.send(userdata);
-            }
-          );
-        } else {
-          res.send("no user info");
-        }
-      } else {
-        res.send("err 발생");
-      }
-    }
-  );
-});
+
+
 
 //게시글 작성
 //req에서 받은 게시클 타입에 따라 타이블에 자동 생성.
