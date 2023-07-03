@@ -20,6 +20,7 @@ server.use(express.json());
 var con = require("./dbConfig/dbConfig.js");
 const { query } = require("express");
 const e = require("express");
+const { start } = require("repl");
 // console.log("console message for test commit");
 // console.log("console message for test commit");
 // console.log("console message for test commit");
@@ -120,10 +121,39 @@ server.post("/todoApp/user/login", function (req, res, next) {
   );
 });
 //일정 추가
-server.post('/todoApp/create/plan', function (req, res, next) {
-  
-  
-})
+server.post("/todoApp/create/plan", function (req, res, next) {
+  const userEmail = req.body["userEmail"];
+  const selectDate = req.body("selectDate");
+  const startTime = req.body["startTime"];
+  const endTime = req.body["endTime"];
+  const check = req.body["check"];
+  const content = req.body["content"];
+
+  // con.query(
+  //   "insert into user values(?,?,?);",
+  //   [userEmail, userName, userPw],
+  //   function (err, rows, fields) {
+  //     if (!err) {
+  //       res.send(req.body);
+  //     } else {
+  //       res.send("err 발생");
+  //     }
+  //   }
+  // );
+
+  con.query(
+    "insert into Plan values(description, email, checkPlan, startTime, endTime, selectDate) ;",
+    [content, email, check, startTime, endTime, selectDate],
+    function (err, rows, fields) {
+      if (!err) {
+        res.send("저장 성공!");
+      } else {
+        res.send("에러 발생!");
+      }
+    }
+  );
+  //con.query('ins')
+});
 
 //id, nickname 중복체크
 server.post("/api/user/create/checkIDdupl", function (req, res, next) {
@@ -162,9 +192,6 @@ server.post("/api/user/create/checkNamedupl", function (req, res, next) {
     }
   );
 });
-
-
-
 
 //게시글 작성
 //req에서 받은 게시클 타입에 따라 타이블에 자동 생성.
