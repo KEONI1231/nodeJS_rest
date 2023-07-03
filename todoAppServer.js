@@ -148,6 +148,7 @@ server.post("/todoApp/create/plan", function (req, res, next) {
       if (!err) {
         res.send("저장 성공!");
       } else {
+        console.log(err);
         res.send("에러 발생!");
       }
     }
