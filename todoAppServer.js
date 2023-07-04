@@ -148,20 +148,24 @@ server.post("/todoApp/create/plan", function (req, res, next) {
 server.get("/todoApp/getPlan", function (req, res, next) {
   const userEmail = req.body["userEmail"];
   const selectDate = req.body["selectDate"];
+  let i = 0;
+  let planData;
   con.query(
     "select * from Plan where email = ? and selectDate = ?;",
     [userEmail, selectDate],
     function (err, rows, fileds) {
       if (!err) {
         if (rows.length != 0) {
-          const planDate = {
-            userEmail: rows[0].email,
-            selectDate: rows[0].selectDate,
-            checkPlan: rows[0].checkPlan,
-            startTime: rows[0].startTime,
-            endTime: rows[0].endTime,
-            description: rows[0].description,
-          };
+          for (i = 0; i < rows.length; i++) {
+            planData[i] = {
+              userEmail: rows[i].email,
+              selectDate: rows[i].selectDate,
+              checkPlan: rows[i].checkPlan,
+              startTime: rows[i].startTime,
+              endTime: rows[i].endTime,
+              description: rows[i].description,
+            };
+          }
           res.send(planDate);
         } else {
           res.send("no plan data");
