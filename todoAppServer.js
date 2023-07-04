@@ -129,21 +129,9 @@ server.post("/todoApp/create/plan", function (req, res, next) {
   const check = req.body["check"];
   const content = req.body["content"];
 
-  // con.query(
-  //   "insert into user values(?,?,?);",
-  //   [userEmail, userName, userPw],
-  //   function (err, rows, fields) {
-  //     if (!err) {
-  //       res.send(req.body);
-  //     } else {
-  //       res.send("err 발생");
-  //     }
-  //   }
-  // );
-
   con.query(
     "insert into Plan values(description, email, checkPlan, startTime, endTime, selectDate) ;",
-    [content, email, check, startTime, endTime, selectDate],
+    [content, userEmail, check, startTime, endTime, selectDate],
     function (err, rows, fields) {
       if (!err) {
         res.send("저장 성공!");
@@ -156,21 +144,34 @@ server.post("/todoApp/create/plan", function (req, res, next) {
   //con.query('ins')
 });
 
-server.get('/todoApp/getPlan', function(req, res, next) {
-  const userEmail = req.body['userEmail'];
-  const selectDate = req.body['selectDate'];
+//모든 일정 불러오기
+server.get("/todoApp/getPlan", function (req, res, next) {
+  const userEmail = req.body["userEmail"];
+  const selectDate = req.body["selectDate"];
   con.query(
-    'select * from Plan where userEmail = ? and selectDate = ?;',[userEmail, selectDate],
-    function(err,rows,fileds) {
-      if(!err) {
-        console.log(rows[0]);
-      }
-      else {
-        console.log(err);
+    "select * from Plan where email = ? and selectDate = ?;",
+    [userEmail, selectDate],
+    function (err, rows, fileds) {
+      if (!err) {
+        if (rows.length != 0) {
+          const planDate = {
+            userEmail: rows[0].email,
+            selectDate: rows[0].selectDate,
+            checkPlan: rows[0].checkPlan,
+            startTime: rows[0].startTime,
+            endTime: rows[0].endTime,
+            description: rows[0].description,
+          };
+          res.send(planDate);
+        } else {
+          res.send("no plan data");
+        }
+      } else {
+        console.log("에러가 발생했습니다.");
       }
     }
-  )
-})
+  );
+});
 //id, nickname 중복체크
 server.post("/api/user/create/checkIDdupl", function (req, res, next) {
   const userEmail = req.body["email"];
