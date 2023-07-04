@@ -149,7 +149,7 @@ server.get("/todoApp/getPlan", function (req, res, next) {
   const userEmail = req.body["userEmail"];
   const selectDate = req.body["selectDate"];
   let i = 0;
-  let planData;
+  let planData = {};
   con.query(
     "select * from Plan where email = ? and selectDate = ?;",
     [userEmail, selectDate],
