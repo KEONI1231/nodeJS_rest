@@ -156,6 +156,21 @@ server.post("/todoApp/create/plan", function (req, res, next) {
   //con.query('ins')
 });
 
+server.get('/todoApp/getPlan', function(req, res, next) {
+  const userEmail = req.body['userEmail'];
+  const selectDate = req.body['selectDate'];
+  con.query(
+    'select * from Plan where userEmail = ? and selectDate = ?;',[userEmail, selectDate],
+    function(err,rows,fileds) {
+      if(!err) {
+        console.log(rows[0]);
+      }
+      else {
+        console.log(err);
+      }
+    }
+  )
+})
 //id, nickname 중복체크
 server.post("/api/user/create/checkIDdupl", function (req, res, next) {
   const userEmail = req.body["email"];
