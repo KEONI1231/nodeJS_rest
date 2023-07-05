@@ -123,14 +123,14 @@ server.post("/todoApp/user/login", function (req, res, next) {
 //일정 추가
 server.post("/todoApp/create/plan", function (req, res, next) {
   const userEmail = req.body["userEmail"];
-  const selectDate = req.body("selectDate");
+  const selectDate = req.body["selectDate"];
   const startTime = req.body["startTime"];
   const endTime = req.body["endTime"];
   const check = req.body["check"];
   const content = req.body["content"];
 
   con.query(
-    "insert into Plan values(description, email, checkPlan, startTime, endTime, selectDate) ;",
+    "insert into Plan (description, email, checkPlan, startTime, endTime, selectDate) values(?, ?, ?, ?, ?, ?)",
     [content, userEmail, check, startTime, endTime, selectDate],
     function (err, rows, fields) {
       if (!err) {
@@ -144,6 +144,28 @@ server.post("/todoApp/create/plan", function (req, res, next) {
   //con.query('ins')
 });
 
+server.get("/todoApp/getPlanDate", function (req, res, next) {
+  const userEmail = req.query.userEmail;
+  let i = 0;
+  let planedDate = {};
+
+  con.query(
+    "select selectDate from Plan where email = ?;",
+    [userEmail],
+    function (err, rows, fields) {
+      if (!err) {
+        for (i = 0; i < rows.length; i++) {
+          planedDate[i] = {
+            selectDate: rows[i].selectDate,
+          };
+          res.send(planedDate);
+        }
+      } else {
+        res.send("no plan data");
+      }
+    }
+  );
+});
 //모든 일정 불러오기
 server.get("/todoApp/getPlan", function (req, res, next) {
   const userEmail = req.query.userEmail;
