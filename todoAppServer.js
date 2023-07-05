@@ -148,7 +148,7 @@ server.get("/todoApp/getPlanDate", function (req, res, next) {
   const userEmail = req.query.userEmail;
   let i = 0;
   let planedDate = {};
-
+  console.log("진입");
   con.query(
     "select selectDate from Plan where email = ?;",
     [userEmail],
@@ -156,16 +156,20 @@ server.get("/todoApp/getPlanDate", function (req, res, next) {
       if (!err) {
         if (rows.length != 0) {
           for (i = 0; i < rows.length; i++) {
+            console.log(i);
             planedDate[i] = {
               selectDate: rows[i].selectDate,
             };
           }
+          console.log("exit");
+          console.log(planedDate);
           for (i = 0; i < planedDate.length; i++) {
             console.log(planedDate[i]);
           }
           res.send(planedDate);
         }
       } else {
+        console.log("no plan data");
         res.send("no plan data");
       }
     }
