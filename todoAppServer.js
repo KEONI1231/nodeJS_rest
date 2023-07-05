@@ -165,12 +165,15 @@ server.get("/todoApp/getPlan", function (req, res, next) {
               endTime: rows[i].endTime,
               description: rows[i].description,
             };
+            //console.log(userEmail);
+            //console.log(selectDate);
           }
           res.send(planData);
         } else {
           res.send("no plan data");
         }
       } else {
+        res.send("no plan data");
         console.log("에러가 발생했습니다.");
       }
     }
