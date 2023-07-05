@@ -154,10 +154,15 @@ server.get("/todoApp/getPlanDate", function (req, res, next) {
     [userEmail],
     function (err, rows, fields) {
       if (!err) {
-        for (i = 0; i < rows.length; i++) {
-          planedDate[i] = {
-            selectDate: rows[i].selectDate,
-          };
+        if (rows.length != 0) {
+          for (i = 0; i < rows.length; i++) {
+            planedDate[i] = {
+              selectDate: rows[i].selectDate,
+            };
+          }
+          for (i = 0; i < planedDate.length; i++) {
+            console.log(planedDate[i]);
+          }
           res.send(planedDate);
         }
       } else {
