@@ -146,8 +146,8 @@ server.post("/todoApp/create/plan", function (req, res, next) {
 
 //모든 일정 불러오기
 server.get("/todoApp/getPlan", function (req, res, next) {
-  const userEmail = req.query.body["userEmail"];
-  const selectDate = req.query.body["selectDate"];
+  const userEmail = req.query.userEmail;
+  const selectDate = req.query.selectDate;
   let i = 0;
   let planData = {};
   con.query(
