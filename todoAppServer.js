@@ -176,7 +176,7 @@ server.get("/todoApp/getPlanDate", function (req, res, next) {
   );
 });
 server.delete("/todoApp/delete-plan", function (req, res, next) {
-  const userEmail = req.query.userEmal;
+  const userEmail = req.query.userEmail;
   const table_id = req.query.id;
 
   con.query(
@@ -188,6 +188,24 @@ server.delete("/todoApp/delete-plan", function (req, res, next) {
         res.send("삭제완료");
       } else {
         console.log("fail");
+        res.send("에러 발생");
+      }
+    }
+  );
+});
+server.put("/todoApp/update-check", function (req, res, next) {
+  const userEmail = req.query.userEmail;
+  const table_id = req.query.id;
+  const checkPlan = req.query.checkPlan;
+  con.query(
+    "update from Plan set checkPlan = ? where email = ? and id = ?",
+    [checkPlan, userEmail, id],
+    function (err, rows, field) {
+      if (!err) {
+        console.log("성공");
+        res.send("성공");
+      } else {
+        console.log("에러 발생");
         res.send("에러 발생");
       }
     }
