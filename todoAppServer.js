@@ -175,6 +175,24 @@ server.get("/todoApp/getPlanDate", function (req, res, next) {
     }
   );
 });
+server.delete("/todoApp/delete-plan", function (req, res, next) {
+  const userEmail = req.query.userEmal;
+  const table_id = req.query.id;
+
+  con.query(
+    "delete from Plan where email=? and id=?;",
+    [userEmail, table_id],
+    function (err, rows, filed) {
+      if (!err) {
+        console.log("ok");
+        res.send("삭제완료");
+      } else {
+        console.log("fail");
+        res.send("에러 발생");
+      }
+    }
+  );
+});
 //모든 일정 불러오기
 server.get("/todoApp/getPlan", function (req, res, next) {
   const userEmail = req.query.userEmail;
