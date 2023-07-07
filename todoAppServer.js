@@ -194,12 +194,13 @@ server.delete("/todoApp/delete-plan", function (req, res, next) {
   );
 });
 server.put("/todoApp/update-check", function (req, res, next) {
-  const userEmail = req.query.userEmail;
-  const table_id = req.query.id;
-  const checkPlan = req.query.checkPlan;
+  const userEmail = req.body.userEmail;
+  const selectDate = req.body.selectDate;
+  const checkPlan = req.body.checkPlan;
+
   con.query(
-    "update from Plan set checkPlan = ? where email = ? and id = ?",
-    [checkPlan, userEmail, id],
+    "update Plan set checkPlan = ? where email = ? and selectDate = ?",
+    [checkPlan, userEmail, selectDate],
     function (err, rows, field) {
       if (!err) {
         console.log("성공");
