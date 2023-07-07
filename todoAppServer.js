@@ -195,6 +195,7 @@ server.get("/todoApp/getPlan", function (req, res, next) {
               startTime: rows[i].startTime,
               endTime: rows[i].endTime,
               description: rows[i].description,
+              id: rows[i].id,
             };
             //console.log(userEmail);
             //console.log(selectDate);
