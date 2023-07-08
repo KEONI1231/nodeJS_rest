@@ -222,7 +222,7 @@ server.put("/todoApp/update-plan", function (req, res, next) {
   const description = req.body.description;
 
   con.query(
-    "update Plan set startTime=? , endTime = ?, check = ?, description = ? where userEmail = ? and id = ?;",
+    "update Plan set startTime=? , endTime = ?, checkPlan = ?, description = ? where userEmail = ? and id = ?;",
     [startTime, endTime, check, description, userEmail, table_id],
     function (err, rows, field) {
       if (!err) {
