@@ -197,10 +197,10 @@ server.put("/todoApp/update-check", function (req, res, next) {
   const userEmail = req.body.userEmail;
   const selectDate = req.body.selectDate;
   const checkPlan = req.body.checkPlan;
-
+  const id = req.body.id;
   con.query(
-    "update Plan set checkPlan = ? where email = ? and selectDate = ?",
-    [checkPlan, userEmail, selectDate],
+    "update Plan set checkPlan = ? where email = ? and selectDate = ? and id = ?",
+    [checkPlan, userEmail, selectDate, id],
     function (err, rows, field) {
       if (!err) {
         console.log("성공");
