@@ -214,13 +214,11 @@ server.put("/todoApp/update-check", function (req, res, next) {
 });
 server.put("/todoApp/update-plan", function (req, res, next) {
   const userEmail = req.body.userEmail;
-  //const selectDate = req.body.selectDate;
   const table_id = req.body.id;
   const startTime = req.body.startTime;
   const endTime = req.body.endTime;
   const check = req.body.checkPlan;
   const description = req.body.description;
-
   con.query(
     "update Plan set startTime=? , endTime = ?, checkPlan = ?, description = ? where userEmail = ? and id = ?;",
     [startTime, endTime, check, description, userEmail, table_id],
@@ -270,6 +268,28 @@ server.get("/todoApp/getPlan", function (req, res, next) {
       }
     }
   );
+});
+
+server.get("/small-chat/get-friends", function (req, res, next) {
+  let i = 0;
+  let friendsList = {};
+  con.query("select * from ChatFriend;", function (err, rows, fileds) {
+    if (!err) {
+      if (rows.length != 0) {
+        for (i = 0; i < rows.length; i++) {
+          friendsList[i] = {
+            f_id: rows[i].id,
+            f_name: rows[i].name,
+            f_statusMessage: rows[i].f_statusMessage,
+          };
+        }
+        res.send(friendsList);
+      }
+    } else {
+      console.log(err);
+      res.send("에러발생");
+    }
+  });
 });
 
 //id, nickname 중복체크
