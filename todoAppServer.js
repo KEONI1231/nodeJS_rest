@@ -233,6 +233,23 @@ server.put("/todoApp/update-plan", function (req, res, next) {
     }
   );
 });
+
+server.post("/small-chat/startchatting", function (req, res, next) {
+  const me = req.body["myName"];
+  const you = req.body["youName"];
+  con.query(
+    "insert into Plan (a, b) values(?, ?)",
+    [me, you],
+    function (err, rows, fields) {
+      if (!err) {
+        res.send("저장 성공!");
+      } else {
+        console.log(err);
+        res.send("에러 발생!");
+      }
+    }
+  );
+});
 //모든 일정 불러오기
 server.get("/todoApp/getPlan", function (req, res, next) {
   const userEmail = req.query.userEmail;
