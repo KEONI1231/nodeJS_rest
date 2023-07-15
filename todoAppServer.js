@@ -238,7 +238,7 @@ server.post("/small-chat/startchatting", function (req, res, next) {
   const me = req.body["myName"];
   const you = req.body["youName"];
   con.query(
-    "insert into Plan (a, b) values(?, ?)",
+    "insert into chatConnect (a, b) values(?, ?)",
     [me, you],
     function (err, rows, fields) {
       if (!err) {
@@ -267,6 +267,7 @@ server.post("/small-chat/getChatList", function (req, res, next) {
             chatList[i] = {
               a: rows[i].a,
               b: rows[i].b,
+              id: rows[i].id,
             };
           }
           console.log("exit");
