@@ -238,14 +238,24 @@ server.post("/small-chat/startchatting", function (req, res, next) {
   const me = req.body["myName"];
   const you = req.body["youName"];
   con.query(
-    "insert into chatConnect (a, b) values(?, ?)",
+    "select * from chatConnect where a = ? and b = ?;",
     [me, you],
     function (err, rows, fields) {
       if (!err) {
-        res.send("저장 성공!");
-      } else {
-        console.log(err);
-        res.send("에러 발생!");
+        if (rows.length != 0) {
+          con.query(
+            "insert into chatConnect (a, b) values(?, ?)",
+            [me, you],
+            function (err, rows, fields) {
+              if (!err) {
+                res.send("저장 성공!");
+              } else {
+                console.log(err);
+                res.send("에러 발생!");
+              }
+            }
+          );
+        }
       }
     }
   );
