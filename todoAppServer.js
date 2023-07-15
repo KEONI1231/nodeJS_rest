@@ -286,7 +286,6 @@ server.get("/todoApp/getPlan", function (req, res, next) {
     }
   );
 });
-
 server.get("/small-chat/get-friends", function (req, res, next) {
   let i = 0;
   let friendsList = {};
@@ -297,7 +296,7 @@ server.get("/small-chat/get-friends", function (req, res, next) {
           friendsList[i] = {
             f_id: rows[i].id,
             f_name: rows[i].name,
-            f_statusMessage: rows[i].f_statusMessage,
+            f_statusMessage: rows[i].statusMessage,
           };
         }
         res.send(friendsList);
