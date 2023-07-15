@@ -250,6 +250,40 @@ server.post("/small-chat/startchatting", function (req, res, next) {
     }
   );
 });
+
+server.post("/small-chat/getChatList", function (req, res, next) {
+  const me = req.body["myName"];
+  let i = 0;
+  let chatList = {};
+  con.query(
+    "select * from chatConnect where a = ?;",
+    [me],
+
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows.length != 0) {
+          for (i = 0; i < rows.length; i++) {
+            console.log(i);
+            chatList[i] = {
+              a: rows[i].a,
+              b: rows[i].b,
+            };
+          }
+          console.log("exit");
+          console.log(chatList);
+          for (i = 0; i < chatList.length; i++) {
+            console.log(chatList[i]);
+          }
+          res.send(chatList);
+        }
+      } else {
+        console.log("no plan data");
+        res.send("no plan data");
+      }
+    }
+  );
+});
+
 //모든 일정 불러오기
 server.get("/todoApp/getPlan", function (req, res, next) {
   const userEmail = req.query.userEmail;
