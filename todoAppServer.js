@@ -1,13 +1,3 @@
-/*
-    GET
-    POST
-    PUT
-    DELETE
- */
-
-// 파일분할 꼭 할것.
-
-//링크 테스트
 const express = require("express");
 const bodyParser = require("body-parser");
 const http = require("http");
@@ -15,13 +5,13 @@ const mysql = require("mysql");
 const path = require("path");
 const socketIo = require("socket.io");
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+const server = express();
+const httpServer = http.createServer(server);
+const io = socketIo(httpServer);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
+server.use(bodyParser.json());
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(express.json());
 
 var con = require("./dbConfig/dbConfig.js");
 const { query } = require("express");
@@ -61,7 +51,6 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
-
 const users = [
   {
     id: "1234",
