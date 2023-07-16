@@ -242,7 +242,7 @@ server.post("/small-chat/startchatting", function (req, res, next) {
     [me, you],
     function (err, rows, fields) {
       if (!err) {
-        if (rows.length != 0) {
+        if (rows.length == 0) {
           con.query(
             "insert into chatConnect (a, b) values(?, ?)",
             [me, you],
