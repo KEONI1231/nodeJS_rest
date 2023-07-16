@@ -10,22 +10,23 @@
 //링크 테스트
 const express = require("express");
 const bodyParser = require("body-parser");
-const server = express();
+const http = require("http");
 const mysql = require("mysql");
 const path = require("path");
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(express.json());
+const socketIo = require("socket.io");
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 var con = require("./dbConfig/dbConfig.js");
 const { query } = require("express");
 const e = require("express");
 const { start } = require("repl");
-// console.log("console message for test commit");
-// console.log("console message for test commit");
-// console.log("console message for test commit");
-// console.log("console message for test commit");
-// console.log('commit test last')
 
 io.on("connection", (socket) => {
   console.log("a user connected");
