@@ -26,6 +26,41 @@ const { start } = require("repl");
 // console.log("console message for test commit");
 // console.log("console message for test commit");
 // console.log('commit test last')
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("joinChat", (chatId) => {
+    const query =
+      "SELECT * FROM chat_messages WHERE chat_id = ? ORDER BY sent_at";
+    con.query(query, [chatId], (err, messages) => {
+      if (err) throw err;
+
+      socket.emit("previousMessages", messages);
+    });
+  });
+
+  socket.on("sendMessage", (msg) => {
+    const { chat_id, sender_email, receiver_email, message } = msg;
+
+    const query =
+      "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
+    con.query(
+      query,
+      [chat_id, sender_email, receiver_email, message],
+      (err, result) => {
+        if (err) throw err;
+
+        io.to(chat_id).emit("receivedMessage", msg);
+      }
+    );
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
+
 const users = [
   {
     id: "1234",
