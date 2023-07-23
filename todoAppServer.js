@@ -294,6 +294,36 @@ server.post("/smallchat/user/create", function (req, res, next) {
     }
   );
 });
+server.post("/smallchat/user/login", function (req, res, next) {
+  var userEmail = req.body.email;
+  var userPW = req.body.pw;
+  con.query(
+    "select EXISTS (select * from ChatUser where email = ? and pw = ?) as success;",
+    [userEmail, userPW],
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows[0].success != 0) {
+          con.query(
+            "select * from ChatUser where email = ? and pw = ?;",
+            [userEmail, userPW],
+            function (err, rows, fields) {
+              const userdata = {
+                email: rows[0].email,
+                pw: rows[0].pw,
+                name: rows[0].name,
+              };
+              res.send(userdata);
+            }
+          );
+        } else {
+          res.send("no user info");
+        }
+      } else {
+        res.send("err 발생");
+      }
+    }
+  );
+});
 
 server.post("/small-chat/startchatting", function (req, res, next) {
   const me = req.body["myName"];
