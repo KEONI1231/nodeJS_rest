@@ -324,7 +324,34 @@ server.post("/smallchat/user/login", function (req, res, next) {
     }
   );
 });
-
+server.get("/small-chat/get-friends", function (req, res, next) {
+  const userEmail = req.query.userEmail;
+  let friendsList = {};
+  con.query(
+    `SELECT Friends.friend_id, ChatUser.name, ChatUser.statusMessage
+     FROM Friends
+     INNER JOIN ChatUser ON Friends.friend_id = ChatUser.email
+     WHERE Friends.user_id = ?;`,
+    [userEmail],
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows.length !== 0) {
+          rows.forEach((row, i) => {
+            friendsList[i] = {
+              f_id: row.friend_id,
+              f_name: row.name,
+              f_statusMessage: row.statusMessage,
+            };
+          });
+          res.send(friendsList);
+        }
+      } else {
+        console.log(err);
+        res.send("에러발생");
+      }
+    }
+  );
+});
 server.post("/small-chat/startchatting", function (req, res, next) {
   const me = req.body["myName"];
   const you = req.body["youName"];
@@ -427,27 +454,6 @@ server.get("/todoApp/getPlan", function (req, res, next) {
       }
     }
   );
-});
-server.get("/small-chat/get-friends", function (req, res, next) {
-  let i = 0;
-  let friendsList = {};
-  con.query("select * from ChatFriend;", function (err, rows, fileds) {
-    if (!err) {
-      if (rows.length != 0) {
-        for (i = 0; i < rows.length; i++) {
-          friendsList[i] = {
-            f_id: rows[i].id,
-            f_name: rows[i].name,
-            f_statusMessage: rows[i].statusMessage,
-          };
-        }
-        res.send(friendsList);
-      }
-    } else {
-      console.log(err);
-      res.send("에러발생");
-    }
-  });
 });
 
 //id, nickname 중복체크
