@@ -277,7 +277,7 @@ server.post("/smallchat/user/create", function (req, res, next) {
         } else {
           // 이메일이 존재하지 않으면
           con.query(
-            "insert into user values(?,?,?,?);",
+            "insert into ChatUser values(?,?,?,?);",
             [userEmail, userName, userPw],
             function (err, rows, fields) {
               if (!err) {
