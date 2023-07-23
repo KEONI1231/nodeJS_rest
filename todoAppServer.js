@@ -259,9 +259,46 @@ server.put("/todoApp/update-plan", function (req, res, next) {
   );
 });
 
+//회원가입 코드
+server.post("/smallchat/user/create", function (req, res, next) {
+  const userEmail = req.body["email"];
+  const userPw = req.body["pw"];
+  const userName = req.body["name"];
+  const userStatusMessage = req.body["statusMessage"];
+
+  con.query(
+    "select EXISTS (select email from ChatUser where email = ?) as success;",
+    [userEmail],
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows[0].success == 1) {
+          // 이메일이 이미 존재하면
+          res.send("이메일이 중복되었습니다.");
+        } else {
+          // 이메일이 존재하지 않으면
+          con.query(
+            "insert into user values(?,?,?,?);",
+            [userEmail, userName, userPw],
+            function (err, rows, fields) {
+              if (!err) {
+                res.send(req.body);
+              } else {
+                res.send("err 발생");
+              }
+            }
+          );
+        }
+      } else {
+        res.send("이메일 확인 중 에러 발생");
+      }
+    }
+  );
+});
+
 server.post("/small-chat/startchatting", function (req, res, next) {
   const me = req.body["myName"];
   const you = req.body["youName"];
+  console.log("에러");
   con.query(
     "select * from chatConnect where a = ? and b = ?;",
     [me, you],
@@ -280,7 +317,12 @@ server.post("/small-chat/startchatting", function (req, res, next) {
               }
             }
           );
+        } else {
+          res.send("this point");
         }
+      } else {
+        console.log(err);
+        res.send("에러");
       }
     }
   );
