@@ -355,26 +355,39 @@ server.get("/small-chat/get-friends", function (req, res, next) {
   );
 });
 server.get("/smallchat/search-friends", function (req, res, next) {
-  const searchEmail = req.query.userEmail;
+  const searchEmail = req.query.searchEmail;
+  const userEmail = req.query.userEmail;
   let friendList = {};
   con.query(
-    "select name, eail from ChatUser where email = ?",
-    [searchEmail],
-    function (err, rows, fileds) {
-      if (!err) {
+    "select * from Friends where user_id = ? and friend_id = ?",
+    [userEmail, searchEmail],
+    {
+      function(err, rows, fields) {
         if (rows.length == 1) {
-          friendList[0] = {
-            f_email: rows[0].email,
-            f_name: row[0].name,
-          };
-          res.send(friendList);
+          res.send("이미 친구 추가가 완료되었습니다.");
         } else {
-          res.send("검색 실패");
+          con.query(
+            "select name, email from ChatUser where email = ?",
+            [searchEmail],
+            function (err, rows, fileds) {
+              if (!err) {
+                if (rows.length == 1) {
+                  friendList[0] = {
+                    f_email: rows[0].email,
+                    f_name: rows[0].name,
+                  };
+                  res.send(friendList);
+                } else {
+                  res.send("검색 실패");
+                }
+              } else {
+                console.log(err);
+                res.send("에러발생");
+              }
+            }
+          );
         }
-      } else {
-        console.log(err);
-        res.send("에러발생");
-      }
+      },
     }
   );
 });
