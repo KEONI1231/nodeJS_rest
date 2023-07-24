@@ -359,7 +359,7 @@ server.get("/smallchat/search-friends", function (req, res, next) {
   let friendList = {};
   con.query(
     "select name, eail from ChatUser where email = ?",
-    [userEmail],
+    [searchEmail],
     function (err, rows, fileds) {
       if (!err) {
         if (rows.length == 1) {
@@ -369,10 +369,11 @@ server.get("/smallchat/search-friends", function (req, res, next) {
           };
           res.send(friendList);
         } else {
-          res.send("검색 실");
+          res.send("검색 실패");
         }
       } else {
-        res.send("에러방생");
+        console.log(err);
+        res.send("에러발생");
       }
     }
   );
