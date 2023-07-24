@@ -278,7 +278,7 @@ server.post("/smallchat/user/create", function (req, res, next) {
           // 이메일이 존재하지 않으면
           con.query(
             "insert into ChatUser values(?,?,?,?);",
-            [userEmail, userStatusMessage, userName, userPw],
+            [userEmail, userStatusMessage, userPw, userName],
             function (err, rows, fields) {
               if (!err) {
                 res.send(req.body);
@@ -335,7 +335,7 @@ server.get("/small-chat/get-friends", function (req, res, next) {
     [userEmail],
     function (err, rows, fields) {
       if (!err) {
-        if (rows.length !== 0) {
+        if (rows.length != 0) {
           rows.forEach((row, i) => {
             friendsList[i] = {
               f_id: row.friend_id,
@@ -344,10 +344,35 @@ server.get("/small-chat/get-friends", function (req, res, next) {
             };
           });
           res.send(friendsList);
+        } else {
+          console.log("친구목록 없음");
         }
       } else {
         console.log(err);
         res.send("에러발생");
+      }
+    }
+  );
+});
+server.get("/smallchat/search-friends", function (req, res, next) {
+  const searchEmail = req.query.userEmail;
+  let friendList = {};
+  con.query(
+    "select name, eail from ChatUser where email = ?",
+    [userEmail],
+    function (err, rows, fileds) {
+      if (!err) {
+        if (rows.length == 1) {
+          friendList[0] = {
+            f_email: rows[0].email,
+            f_name: row[0].name,
+          };
+          res.send(friendList);
+        } else {
+          res.send("검색 실");
+        }
+      } else {
+        res.send("에러방생");
       }
     }
   );
