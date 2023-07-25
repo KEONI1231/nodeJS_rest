@@ -411,17 +411,17 @@ server.post("/small-chat/add-friend", function (req, res, next) {
   );
 });
 server.post("/small-chat/startchatting", function (req, res, next) {
-  const me = req.body["myName"];
-  const you = req.body["youName"];
+  const me = req.body["userEmail"];
+  const you = req.body["friendEmail"];
   console.log("에러");
   con.query(
-    "select * from chatConnect where a = ? and b = ?;",
+    "select * from ChatConnects where a_email = ? and b_email = ?;",
     [me, you],
     function (err, rows, fields) {
       if (!err) {
         if (rows.length == 0) {
           con.query(
-            "insert into chatConnect (a, b) values(?, ?)",
+            "insert into ChatConnects (a_email, b_email) values(?, ?)",
             [me, you],
             function (err, rows, fields) {
               if (!err) {
