@@ -338,7 +338,7 @@ server.get("/small-chat/get-friends", function (req, res, next) {
         if (rows.length != 0) {
           rows.forEach((row, i) => {
             friendsList[i] = {
-              f_id: row.friend_id,
+              f_email: row.friend_id,
               f_name: row.name,
               f_statusMessage: row.statusMessage,
             };
@@ -413,7 +413,7 @@ server.post("/small-chat/add-friend", function (req, res, next) {
 server.post("/small-chat/startchatting", function (req, res, next) {
   const me = req.body["userEmail"];
   const you = req.body["friendEmail"];
-  console.log("에러");
+
   con.query(
     "select * from ChatConnects where a_email = ? and b_email = ?;",
     [me, you],
