@@ -444,12 +444,12 @@ server.post("/small-chat/startchatting", function (req, res, next) {
 });
 
 server.post("/small-chat/getChatList", function (req, res, next) {
-  const me = req.body["myName"];
+  const me = req.body["userEmail"];
   let i = 0;
   let chatList = {};
   con.query(
-    "select * from chatConnect where a = ?;",
-    [me],
+    "select * from ChatConnects where a = ? or b = ?;",
+    [me, me],
 
     function (err, rows, fields) {
       if (!err) {
