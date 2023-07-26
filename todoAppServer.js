@@ -447,32 +447,39 @@ server.post("/small-chat/getChatList", function (req, res, next) {
   const me = req.body["userEmail"];
   let i = 0;
   let chatList = {};
+
   con.query(
-    "select * from ChatConnects where a_email = ? or b_email = ?;",
+    `SELECT ChatConnects.*, ChatUser.name 
+    FROM ChatConnects 
+    LEFT JOIN ChatUser 
+    ON ChatConnects.b_email = ChatUser.email 
+    WHERE ChatConnects.a_email = ? OR ChatConnects.b_email = ?;`,
     [me, me],
 
     function (err, rows, fields) {
       if (!err) {
         if (rows.length != 0) {
-          for (i = 0; i < rows.length; i++) {
+          for (let i = 0; i < rows.length; i++) {
             console.log(i);
-            if (rowspi[i].a_email == me) {
+            if (rows[i].a_email == me) {
               chatList[i] = {
-                userEmai: rows[i].a_email,
+                userEmail: rows[i].a_email,
                 b_email: rows[i].b_email,
                 id: rows[i].id,
+                name: rows[i].name,
               };
             } else {
               chatList[i] = {
                 userEmail: rows[i].b_email,
-                b_email: rows[i].a_eamil,
+                b_email: rows[i].a_email,
                 id: rows[i].id,
+                name: rows[i].name,
               };
             }
           }
           console.log("exit");
           console.log(chatList);
-          for (i = 0; i < chatList.length; i++) {
+          for (let i = 0; i < chatList.length; i++) {
             console.log(chatList[i]);
           }
           res.send(chatList);
