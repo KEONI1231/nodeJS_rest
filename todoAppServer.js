@@ -331,8 +331,9 @@ server.get("/small-chat/get-friends", function (req, res, next) {
     `SELECT Friends.friend_id, ChatUser.name, ChatUser.statusMessage
      FROM Friends
      INNER JOIN ChatUser ON Friends.friend_id = ChatUser.email
-     WHERE Friends.user_id = ?;`,
-    [userEmail],
+     WHERE Friends.user_id = ? or Friends.friend_id = ?;`,
+    [userEmail, userEmail],
+
     function (err, rows, fields) {
       if (!err) {
         if (rows.length != 0) {
