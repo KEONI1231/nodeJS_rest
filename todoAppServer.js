@@ -456,19 +456,23 @@ server.post("/small-chat/startchatting", function (req, res, next) {
     }
   );
 });
-
 server.post("/small-chat/getChatList", function (req, res, next) {
   const me = req.body["userEmail"];
   let i = 0;
   let chatList = {};
 
   con.query(
-    `SELECT ChatConnects.*, ChatUser.name 
-    FROM ChatConnects 
-    LEFT JOIN ChatUser 
-    ON ChatConnects.b_email = ChatUser.email 
-    WHERE ChatConnects.a_email = ? OR ChatConnects.b_email = ?;`,
-    [me, me],
+    `
+    SELECT ChatConnects.*, ChatUser.name 
+    FROM (
+      SELECT * FROM ChatConnects WHERE a_email = ?
+      UNION
+      SELECT * FROM ChatConnects WHERE b_email = ?
+    ) AS ChatConnects 
+    JOIN ChatUser 
+    ON CASE WHEN ChatConnects.a_email = ? THEN ChatConnects.b_email ELSE ChatConnects.a_email END = ChatUser.email
+    `,
+    [me, me, me],
 
     function (err, rows, fields) {
       if (!err) {
