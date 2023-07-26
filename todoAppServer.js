@@ -448,7 +448,7 @@ server.post("/small-chat/getChatList", function (req, res, next) {
   let i = 0;
   let chatList = {};
   con.query(
-    "select * from ChatConnects where a = ? or b = ?;",
+    "select * from ChatConnects where a_email = ? or b_email = ?;",
     [me, me],
 
     function (err, rows, fields) {
@@ -456,11 +456,19 @@ server.post("/small-chat/getChatList", function (req, res, next) {
         if (rows.length != 0) {
           for (i = 0; i < rows.length; i++) {
             console.log(i);
-            chatList[i] = {
-              a: rows[i].a,
-              b: rows[i].b,
-              id: rows[i].id,
-            };
+            if (rowspi[i].a_email == me) {
+              chatList[i] = {
+                userEmai: rows[i].a_email,
+                b_email: rows[i].b_email,
+                id: rows[i].id,
+              };
+            } else {
+              chatList[i] = {
+                userEmail: rows[i].b_email,
+                b_email: rows[i].a_eamil,
+                id: rows[i].id,
+              };
+            }
           }
           console.log("exit");
           console.log(chatList);
@@ -470,6 +478,7 @@ server.post("/small-chat/getChatList", function (req, res, next) {
           res.send(chatList);
         }
       } else {
+        console.log(err);
         console.log("no plan data");
         res.send("no plan data");
       }
