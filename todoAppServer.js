@@ -324,22 +324,34 @@ server.post("/smallchat/user/login", function (req, res, next) {
     }
   );
 });
+
+// `SELECT Friends.friend_id, ChatUser.name, ChatUser.statusMessage
+// FROM Friends
+// INNER JOIN ChatUser ON Friends.friend_id = ChatUser.email
+// WHERE Friends.user_id = ? or Friends.friend_id = ?;`,
 server.get("/small-chat/get-friends", function (req, res, next) {
   const userEmail = req.query.userEmail;
+  const rowFriendsEmailList = {};
   let friendsList = {};
   con.query(
-    `SELECT Friends.friend_id, ChatUser.name, ChatUser.statusMessage
-     FROM Friends
-     INNER JOIN ChatUser ON Friends.friend_id = ChatUser.email
-     WHERE Friends.user_id = ? or Friends.friend_id = ?;`,
+    `
+    SELECT * 
+    FROM (
+      SELECT friend_id as email FROM Friends WHERE user_id = ?
+      UNION
+      SELECT user_id as email FROM Friends WHERE friend_id = ?
+    ) AS friends
+    JOIN ChatUser
+    ON friends.email = ChatUser.email
+    `,
     [userEmail, userEmail],
-
     function (err, rows, fields) {
       if (!err) {
+        console.log(rows);
         if (rows.length != 0) {
           rows.forEach((row, i) => {
             friendsList[i] = {
-              f_email: row.friend_id,
+              f_email: row.email,
               f_name: row.name,
               f_statusMessage: row.statusMessage,
             };
@@ -355,6 +367,7 @@ server.get("/small-chat/get-friends", function (req, res, next) {
     }
   );
 });
+
 server.get("/smallchat/search-friends", function (req, res, next) {
   const searchEmail = req.query.searchEmail;
   const userEmail = req.query.userEmail;
