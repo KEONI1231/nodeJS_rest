@@ -151,7 +151,7 @@ server.get("/get-chat-contents", function (req, res, next) {
   const friendEmail = req.query.friendEmail;
 
   con.query(
-    "select * from ChatLists where a_email = ? b_email = ?;",
+    "select * from ChatLists where a_user = ? b_user = ?;",
     [a_email, b_email],
     function (err, rows, fields) {
       if (!err) {
