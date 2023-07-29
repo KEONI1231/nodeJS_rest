@@ -146,6 +146,26 @@ server.post("/todoApp/user/login", function (req, res, next) {
   );
 });
 //일정 추가
+server.get("/get-chat-contents", function (req, res, next) {
+  const userEmail = req.query.userEmail;
+  const friendEmail = req.query.friendEmail;
+
+  con.query(
+    "select * from ChatLists where a_email = ? b_email = ?;",
+    [a_email, b_email],
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows.length != 0) {
+          res.send("success");
+        } else {
+          res.send("fail");
+        }
+      } else {
+        res.send("error");
+      }
+    }
+  );
+});
 server.post("/todoApp/create/plan", function (req, res, next) {
   const userEmail = req.body["userEmail"];
   const selectDate = req.body["selectDate"];
@@ -311,6 +331,7 @@ server.post("/smallchat/user/login", function (req, res, next) {
                 email: rows[0].email,
                 pw: rows[0].pw,
                 name: rows[0].name,
+                statusMessage: rows[0].statusMessage,
               };
               res.send(userdata);
             }
