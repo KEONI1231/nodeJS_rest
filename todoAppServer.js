@@ -152,7 +152,7 @@ server.get("/get-chat-contents", function (req, res, next) {
 
   con.query(
     "select * from ChatLists where a_user = ? b_user = ?;",
-    [a_email, b_email],
+    [userEmail, friendEmail],
     function (err, rows, fields) {
       if (!err) {
         if (rows.length != 0) {
@@ -161,6 +161,7 @@ server.get("/get-chat-contents", function (req, res, next) {
           res.send("fail");
         }
       } else {
+        console.log(err);
         res.send("error");
       }
     }
