@@ -145,28 +145,7 @@ server.post("/todoApp/user/login", function (req, res, next) {
     }
   );
 });
-//일정 추가
-server.get("/get-chat-contents", function (req, res, next) {
-  const userEmail = req.query.userEmail;
-  const friendEmail = req.query.friendEmail;
 
-  con.query(
-    "select * from ChatLists where a_user = ? b_user = ?;",
-    [userEmail, friendEmail],
-    function (err, rows, fields) {
-      if (!err) {
-        if (rows.length != 0) {
-          res.send("success");
-        } else {
-          res.send("fail");
-        }
-      } else {
-        console.log(err);
-        res.send("error");
-      }
-    }
-  );
-});
 server.post("/todoApp/create/plan", function (req, res, next) {
   const userEmail = req.body["userEmail"];
   const selectDate = req.body["selectDate"];
@@ -528,6 +507,42 @@ server.post("/small-chat/getChatList", function (req, res, next) {
         console.log(err);
         console.log("no plan data");
         res.send("no plan data");
+      }
+    }
+  );
+});
+//일정 추가
+server.get("/get-chat-contents", function (req, res, next) {
+  const userEmail = req.query.userEmail;
+  const friendEmail = req.query.friendEmail;
+
+  let i = 0;
+  let responseData = {};
+  con.query(
+    "select * from ChatLists where a_email = ? and b_email = ?;",
+    [userEmail, friendEmail],
+    function (err, rows, fields) {
+      if (!err) {
+        if (rows.length != 0) {
+          for (i = 0; i <= rows.length; i++) {
+            responseData[i] = {
+              id: rows[i].id,
+              contents: rows[i].contents,
+              sender: rows[i].sender,
+              time: rows[i].time,
+              a_name: rows[i].a_name,
+              b_name: rows[i].b_name,
+              a_email: rows[i].a_email,
+              b_email: rows[i].b_email,
+            };
+          }
+          res.send(responseData);
+        } else {
+          res.send("fail");
+        }
+      } else {
+        console.log(err);
+        res.send("error");
       }
     }
   );
