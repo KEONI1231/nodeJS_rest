@@ -15,7 +15,10 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(express.json());
 
-// ... the rest of your code ...
+var con = require("./dbConfig/dbConfig.js");
+const { query } = require("express");
+const e = require("express");
+const { start } = require("repl");
 
 //socket code
 io.on("connection", (socket) => {
