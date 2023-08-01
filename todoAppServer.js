@@ -44,6 +44,11 @@ io.on("connection", (socket) => {
   });
   socket.on("sendMessage", ({ friendEmail, userEmail, message }) => {
     console.log(message);
+    const roomName = [userEmail, friendEmail].sort().join("-");
+    socket.to(roomName).emit("sendMessage", {
+      user: "admin",
+      text: message,
+    });
     //const { chat_id, sender_email, receiver_email, message } = msg;
 
     // const query =
