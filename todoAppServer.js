@@ -30,12 +30,16 @@ io.on("connection", (socket) => {
   let date = today.getDate(); // 날짜
   let day = today.getDay(); // 요일
   console.log(year + "/" + month + "/" + date + "/" + day);
-  const finalDate = year + "/" + month + "/" + date + "/" + day;
+  const finalDate = year + "년" + month + "월" + date + "일" + day;
   socket.on("join", ({ userEmail, friendEmail }) => {
-    //console.log("User joined: ", userEmail, friendEmail);
-    socket.emit("admin-message", {
+    const roomName = [userEmail, friendEmail].sort().join("-");
+
+    socket.join(roomName); // 이 사용자를 룸에 추가
+
+    console.log(`User joined: ${roomName}`);
+    socket.emit("message", {
       user: "admin",
-      text: finalDate,
+      text: "Welcome to " + roomName,
     });
   });
   socket.on("sendMessage", (msg) => {
