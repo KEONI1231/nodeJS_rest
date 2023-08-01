@@ -69,14 +69,23 @@ io.on("connection", (socket) => {
           ],
           function (err, rows, fields) {
             if (!err) {
-              res.send("성공");
+              socket.to(roomName).emit("message", {
+                user: "admin",
+                text: message,
+              });
             } else {
-              res.send("실패1");
+              socket.to(roomName).emit("message", {
+                user: "admin",
+                text: "error",
+              });
             }
           }
         );
       } else {
-        res.send("실패2");
+        socket.to(roomName).emit("message", {
+          user: "admin",
+          text: "error",
+        });
       }
     });
 
