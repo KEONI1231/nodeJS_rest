@@ -18,19 +18,27 @@ const { query } = require("express");
 const e = require("express");
 const { start } = require("repl");
 
+//socket code
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.on("joinChat", (chatId) => {
-    const query =
-      "SELECT * FROM chat_messages WHERE chat_id = ? ORDER BY sent_at";
-    con.query(query, [chatId], (err, messages) => {
-      if (err) throw err;
+  // socket.on("joinChat", (chatId) => {
+  //   const query =
+  //     "SELECT * FROM chat_messages WHERE chat_id = ? ORDER BY sent_at";
+  //   con.query(query, [chatId], (err, messages) => {
+  //     if (err) throw err;
 
-      socket.emit("previousMessages", messages);
+  //     socket.emit("previousMessages", messages);
+  //   });
+  // });
+  const time = Data.now();
+  console.log(time);
+  socket.on("join", ({ email1, email2 }, callback) => {
+    socket.emit("message", {
+      user: "admin",
+      text: time.toString(),
     });
   });
-
   socket.on("sendMessage", (msg) => {
     const { chat_id, sender_email, receiver_email, message } = msg;
 
@@ -51,18 +59,8 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
-const users = [
-  {
-    id: "1234",
-    name: "keoni",
-    email: "kh991231@naver.com",
-  },
-  {
-    id: "4567",
-    name: "kimkim",
-    email: "kimkeonhwi@gmail.com",
-  },
-];
+
+///rest api코드
 
 server.post("/api/test", function (req, res, next) {
   const testString = req.body[test];
@@ -524,7 +522,8 @@ server.get("/get-chat-contents", function (req, res, next) {
     function (err, rows, fields) {
       if (!err) {
         if (rows.length != 0) {
-          for (i = 0; i <= rows.length; i++) {
+          console.log(rows);
+          for (i = 0; i < rows.length; i++) {
             responseData[i] = {
               id: rows[i].id,
               contents: rows[i].contents,
