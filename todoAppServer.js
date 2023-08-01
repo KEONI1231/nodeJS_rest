@@ -42,43 +42,62 @@ io.on("connection", (socket) => {
       text: "Welcome to " + roomName,
     });
   });
-  "insert into Plan (description, email, checkPlan, startTime, endTime, selectDate) values(?, ?, ?, ?, ?, ?)",
-    [content, userEmail, check, startTime, endTime, selectDate],
-    socket.on(
-      "sendMessage",
-      ({ friendEmail, userEmail, userName, message }) => {
-        console.log(message);
-        const roomName = [userEmail, friendEmail].sort().join("-");
+  //"insert into Plan (description, email, checkPlan, startTime, endTime, selectDate) values(?, ?, ?, ?, ?, ?)",
+  //    [content, userEmail, check, startTime, endTime, selectDate],
+  socket.on("sendMessage", ({ friendEmail, userEmail, userName, message }) => {
+    console.log(message);
+    let now = new Date();
+    let datetime = now.toISOString().slice(0, 19).replace("T", " ");
 
-        const query1 = "select name from  ChatUser where email = ?;";
-        con.query(query1, [friendEmail], (err, rows, result) => {
-          if (!err) {
-            console.log(rows);
-            // con.query('insert into ChatLists (contents, sender, time, a_name, b_name, a_email, b_email) values(?,?,?,?,?,?,?);',
-            // [message, userEmail, ]
-            //)
+    const roomName = [userEmail, friendEmail].sort().join("-");
+
+    const query1 = "select name from  ChatUser where email = ?;";
+    con.query(query1, [friendEmail], (err, rows, result) => {
+      if (!err) {
+        const b_name = console.log(rows[0].name);
+        con.query(
+          "insert into ChatLists (contents, sender, time, a_name, b_name, a_email, b_email) values(?,?,?,?,?,?,?);",
+          [
+            message,
+            userEmail,
+            userEmail,
+            datetime,
+            userName,
+            b_name,
+            userEmail,
+            friendEmail,
+          ],
+          function (err, rows, fields) {
+            if (!err) {
+              res.send("성공");
+            } else {
+              res.send("실패1");
+            }
           }
-        });
-
-        socket.to(roomName).emit("sendMessage", {
-          user: "admin",
-          text: message,
-        });
-        //const { chat_id, sender_email, receiver_email, message } = msg;
-
-        // const query =
-        //   "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
-        // con.query(
-        //   query,
-        //   [chat_id, sender_email, receiver_email, message],
-        //   (err, result) => {
-        //     if (err) throw err;
-
-        //     io.to(chat_id).emit("receivedMessage", msg);
-        //   }
-        // );
+        );
+      } else {
+        res.send("실패2");
       }
-    );
+    });
+
+    socket.to(roomName).emit("sendMessage", {
+      user: "admin",
+      text: message,
+    });
+    //const { chat_id, sender_email, receiver_email, message } = msg;
+
+    // const query =
+    //   "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
+    // con.query(
+    //   query,
+    //   [chat_id, sender_email, receiver_email, message],
+    //   (err, result) => {
+    //     if (err) throw err;
+
+    //     io.to(chat_id).emit("receivedMessage", msg);
+    //   }
+    // );
+  });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
