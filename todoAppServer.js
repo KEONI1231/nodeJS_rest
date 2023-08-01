@@ -33,12 +33,13 @@ io.on("connection", (socket) => {
   // });
   const time = Data.now();
   console.log(time);
-  socket.on("join", ({ email1, email2 }, callback) => {
+  socket.on("join", ({ userEmail, friendEmail }, callback) => {
     socket.emit("message", {
       user: "admin",
       text: time.toString(),
     });
   });
+
   socket.on("sendMessage", (msg) => {
     const { chat_id, sender_email, receiver_email, message } = msg;
 
