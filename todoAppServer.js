@@ -54,15 +54,15 @@ io.on("connection", (socket) => {
     const query1 = "select name from  ChatUser where email = ?;";
     con.query(query1, [friendEmail], (err, rows, result) => {
       if (!err) {
-        const b_name = console.log(rows[0].name);
+        const b_name = rows[0].name;
         con.query(
           "insert into ChatLists (contents, sender, time, a_name, b_name, a_email, b_email) values(?,?,?,?,?,?,?);",
           [
             message,
             userEmail,
-            userEmail,
             datetime,
             userName,
+
             b_name,
             userEmail,
             friendEmail,
@@ -74,9 +74,10 @@ io.on("connection", (socket) => {
                 text: message,
               });
             } else {
+              console.log(err);
               socket.to(roomName).emit("message", {
                 user: "admin",
-                text: "error",
+                text: "error1",
               });
             }
           }
@@ -84,7 +85,7 @@ io.on("connection", (socket) => {
       } else {
         socket.to(roomName).emit("message", {
           user: "admin",
-          text: "error",
+          text: "error2",
         });
       }
     });
@@ -571,36 +572,23 @@ server.get("/get-chat-contents", function (req, res, next) {
   let i = 0;
   let responseData = {};
   con.query(
-    "SELECT * FROM ChatLists WHERE (a_email = ? AND b_email = ?) OR (a_email = ? AND b_email = ?);",
+    "SELECT * FROM ChatLists WHERE (a_email = ? AND b_email = ?) OR (a_email = ? AND b_email = ?) ORDER BY time DESC;",
     [userEmail, friendEmail, friendEmail, userEmail],
     function (err, rows, fields) {
       if (!err) {
         if (rows.length != 0) {
           console.log(rows);
           for (i = 0; i < rows.length; i++) {
-            if (rows[i].a_email == userEmail) {
-              responseData[i] = {
-                id: rows[i].id,
-                contents: rows[i].contents,
-                sender: rows[i].sender,
-                time: rows[i].time,
-                a_name: rows[i].a_name,
-                b_name: rows[i].b_name,
-                a_email: rows[i].a_email,
-                b_email: rows[i].b_email,
-              };
-            } else {
-              responseData[i] = {
-                id: rows[i].id,
-                contents: rows[i].contents,
-                sender: rows[i].sender,
-                time: rows[i].time,
-                b_name: rows[i].a_name,
-                a_name: rows[i].b_name,
-                b_email: rows[i].a_email,
-                a_email: rows[i].b_email,
-              };
-            }
+            responseData[i] = {
+              id: rows[i].id,
+              contents: rows[i].contents,
+              sender: rows[i].sender,
+              time: rows[i].time,
+              a_name: rows[i].a_name,
+              b_name: rows[i].b_name,
+              a_email: rows[i].a_email,
+              b_email: rows[i].b_email,
+            };
           }
           res.send(responseData);
         } else {
