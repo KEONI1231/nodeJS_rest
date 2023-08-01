@@ -23,26 +23,15 @@ const { start } = require("repl");
 //socket code
 io.on("connection", (socket) => {
   console.log("a user connected");
-
-  // socket.on("joinChat", (chatId) => {
-  //   const query =
-  //     "SELECT * FROM chat_messages WHERE chat_id = ? ORDER BY sent_at";
-  //   con.query(query, [chatId], (err, messages) => {
-  //     if (err) throw err;
-
-  //     socket.emit("previousMessages", messages);
-  //   });
-  // });
   const time = Date.now();
   console.log(time);
   socket.on("join", ({ userEmail, friendEmail }) => {
-    console.log("User joined: ", userEmail, friendEmail);
-    socket.emit("message", {
+    //console.log("User joined: ", userEmail, friendEmail);
+    socket.emit("admin-message", {
       user: "admin",
       text: time.toString(),
     });
   });
-
   socket.on("sendMessage", (msg) => {
     const { chat_id, sender_email, receiver_email, message } = msg;
 
@@ -362,6 +351,7 @@ server.get("/small-chat/get-friends", function (req, res, next) {
           res.send(friendsList);
         } else {
           console.log("친구목록 없음");
+          res.sen("친구 목록 없음");
         }
       } else {
         console.log(err);
@@ -846,7 +836,7 @@ server.put("/user/change/info/email", function (req, res, next) {
   );
 });
 
-server.listen(3000, () => {
+httpServer.listen(3000, () => {
   console.log("!!server is running!!");
 });
 
