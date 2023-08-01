@@ -42,20 +42,21 @@ io.on("connection", (socket) => {
       text: "Welcome to " + roomName,
     });
   });
-  socket.on("sendMessage", (msg) => {
-    const { chat_id, sender_email, receiver_email, message } = msg;
+  socket.on("sendMessage", ({ friendEmail, userEmail, message }) => {
+    console.log(message);
+    //const { chat_id, sender_email, receiver_email, message } = msg;
 
-    const query =
-      "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
-    con.query(
-      query,
-      [chat_id, sender_email, receiver_email, message],
-      (err, result) => {
-        if (err) throw err;
+    // const query =
+    //   "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
+    // con.query(
+    //   query,
+    //   [chat_id, sender_email, receiver_email, message],
+    //   (err, result) => {
+    //     if (err) throw err;
 
-        io.to(chat_id).emit("receivedMessage", msg);
-      }
-    );
+    //     io.to(chat_id).emit("receivedMessage", msg);
+    //   }
+    // );
   });
 
   socket.on("disconnect", () => {
