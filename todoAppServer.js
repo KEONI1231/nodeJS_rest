@@ -527,8 +527,8 @@ server.get("/get-chat-contents", function (req, res, next) {
   let i = 0;
   let responseData = {};
   con.query(
-    "select * from ChatLists where a_email = ? and b_email = ?;",
-    [userEmail, friendEmail],
+    "SELECT * FROM ChatLists WHERE (a_email = ? AND b_email = ?) OR (a_email = ? AND b_email = ?);",
+    [userEmail, friendEmail, friendEmail, userEmail],
     function (err, rows, fields) {
       if (!err) {
         if (rows.length != 0) {
