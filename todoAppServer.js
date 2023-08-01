@@ -23,13 +23,19 @@ const { start } = require("repl");
 //socket code
 io.on("connection", (socket) => {
   console.log("a user connected");
-  const time = Date.now();
-  console.log(time);
+  let today = new Date();
+
+  let year = today.getFullYear(); // 년도
+  let month = today.getMonth() + 1; // 월
+  let date = today.getDate(); // 날짜
+  let day = today.getDay(); // 요일
+  console.log(year + "/" + month + "/" + date + "/" + day);
+  const finalDate = year + "/" + month + "/" + date + "/" + day;
   socket.on("join", ({ userEmail, friendEmail }) => {
     //console.log("User joined: ", userEmail, friendEmail);
     socket.emit("admin-message", {
       user: "admin",
-      text: time.toString(),
+      text: finalDate,
     });
   });
   socket.on("sendMessage", (msg) => {
