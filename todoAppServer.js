@@ -42,27 +42,43 @@ io.on("connection", (socket) => {
       text: "Welcome to " + roomName,
     });
   });
-  socket.on("sendMessage", ({ friendEmail, userEmail, message }) => {
-    console.log(message);
-    const roomName = [userEmail, friendEmail].sort().join("-");
-    socket.to(roomName).emit("sendMessage", {
-      user: "admin",
-      text: message,
-    });
-    //const { chat_id, sender_email, receiver_email, message } = msg;
+  "insert into Plan (description, email, checkPlan, startTime, endTime, selectDate) values(?, ?, ?, ?, ?, ?)",
+    [content, userEmail, check, startTime, endTime, selectDate],
+    socket.on(
+      "sendMessage",
+      ({ friendEmail, userEmail, userName, message }) => {
+        console.log(message);
+        const roomName = [userEmail, friendEmail].sort().join("-");
 
-    // const query =
-    //   "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
-    // con.query(
-    //   query,
-    //   [chat_id, sender_email, receiver_email, message],
-    //   (err, result) => {
-    //     if (err) throw err;
+        const query1 = "select name from  ChatUser where email = ?;";
+        con.query(query1, [friendEmail], (err, rows, result) => {
+          if (!err) {
+            console.log(rows);
+            // con.query('insert into ChatLists (contents, sender, time, a_name, b_name, a_email, b_email) values(?,?,?,?,?,?,?);',
+            // [message, userEmail, ]
+            //)
+          }
+        });
 
-    //     io.to(chat_id).emit("receivedMessage", msg);
-    //   }
-    // );
-  });
+        socket.to(roomName).emit("sendMessage", {
+          user: "admin",
+          text: message,
+        });
+        //const { chat_id, sender_email, receiver_email, message } = msg;
+
+        // const query =
+        //   "INSERT INTO chat_messages (chat_id, sender_email, receiver_email, message) VALUES (?, ?, ?, ?)";
+        // con.query(
+        //   query,
+        //   [chat_id, sender_email, receiver_email, message],
+        //   (err, result) => {
+        //     if (err) throw err;
+
+        //     io.to(chat_id).emit("receivedMessage", msg);
+        //   }
+        // );
+      }
+    );
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
@@ -534,16 +550,29 @@ server.get("/get-chat-contents", function (req, res, next) {
         if (rows.length != 0) {
           console.log(rows);
           for (i = 0; i < rows.length; i++) {
-            responseData[i] = {
-              id: rows[i].id,
-              contents: rows[i].contents,
-              sender: rows[i].sender,
-              time: rows[i].time,
-              a_name: rows[i].a_name,
-              b_name: rows[i].b_name,
-              a_email: rows[i].a_email,
-              b_email: rows[i].b_email,
-            };
+            if (rows[i].a_email == userEmail) {
+              responseData[i] = {
+                id: rows[i].id,
+                contents: rows[i].contents,
+                sender: rows[i].sender,
+                time: rows[i].time,
+                a_name: rows[i].a_name,
+                b_name: rows[i].b_name,
+                a_email: rows[i].a_email,
+                b_email: rows[i].b_email,
+              };
+            } else {
+              responseData[i] = {
+                id: rows[i].id,
+                contents: rows[i].contents,
+                sender: rows[i].sender,
+                time: rows[i].time,
+                b_name: rows[i].a_name,
+                a_name: rows[i].b_name,
+                b_email: rows[i].a_email,
+                a_email: rows[i].b_email,
+              };
+            }
           }
           res.send(responseData);
         } else {
