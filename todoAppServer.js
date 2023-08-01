@@ -10,7 +10,7 @@ const server = express();
 const httpServer = http.createServer(server);
 const io = socketIo(httpServer);
 
-server.use(cors()); // And add this line
+//server.use(cors()); // And add this line
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(express.json());
@@ -33,13 +33,13 @@ io.on("connection", (socket) => {
   //     socket.emit("previousMessages", messages);
   //   });
   // });
-  const time = Data.now();
+  const time = Date.now();
   console.log(time);
-  socket.on("join", ({ userEmail, friendEmail }, callback) => {
+  socket.on("join", ({ userEmail, friendEmail }) => {
     console.log("User joined: ", userEmail, friendEmail);
     socket.emit("message", {
       user: "admin",
-      text: Date.now().toString(),
+      text: time.toString(),
     });
   });
 
