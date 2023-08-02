@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
                 a_email: userEmail,
                 b_email: friendEmail,
                 a_name: userName,
-                b_name: n_name,
+                b_name: b_name,
                 sender: userEmail,
 
                 contents: message,
@@ -576,7 +576,7 @@ server.get("/get-chat-contents", function (req, res, next) {
   let i = 0;
   let responseData = {};
   con.query(
-    "SELECT * FROM ChatLists WHERE (a_email = ? AND b_email = ?) OR (a_email = ? AND b_email = ?) ORDER BY time DESC;",
+    "SELECT * FROM ChatLists WHERE (a_email = ? AND b_email = ?) OR (a_email = ? AND b_email = ?) ORDER BY time ASC;",
     [userEmail, friendEmail, friendEmail, userEmail],
     function (err, rows, fields) {
       if (!err) {
