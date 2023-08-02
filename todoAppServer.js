@@ -67,11 +67,18 @@ io.on("connection", (socket) => {
             userEmail,
             friendEmail,
           ],
+
           function (err, rows, fields) {
             if (!err) {
               socket.to(roomName).emit("message", {
-                user: "admin",
-                text: message,
+                a_email: string,
+                b_email: string,
+                a_name: string,
+                b_name: string,
+                sender: string,
+
+                contents: string,
+                time: string,
               });
             } else {
               console.log(err);
@@ -90,10 +97,7 @@ io.on("connection", (socket) => {
       }
     });
 
-    socket.to(roomName).emit("sendMessage", {
-      user: "admin",
-      text: message,
-    });
+    // socket.to(roomName).emit("sendMessage", {});
     //const { chat_id, sender_email, receiver_email, message } = msg;
 
     // const query =
