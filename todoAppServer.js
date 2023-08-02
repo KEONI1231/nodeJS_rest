@@ -46,8 +46,18 @@ io.on("connection", (socket) => {
   //    [content, userEmail, check, startTime, endTime, selectDate],
   socket.on("sendMessage", ({ friendEmail, userEmail, userName, message }) => {
     console.log(message);
-    let now = new Date();
-    let datetime = now.toISOString().slice(0, 19).replace("T", " ");
+    let now = new Date(); // 현재 시간 (UTC)
+    let offset = 9 * 60 * 60 * 1000; // 9시간 (밀리초 단위)
+
+    let koreaTime = new Date(now.getTime() + offset); // 한국 시간
+    let year = koreaTime.getUTCFullYear();
+    let month = (koreaTime.getUTCMonth() + 1).toString().padStart(2, "0");
+    let day = koreaTime.getUTCDate().toString().padStart(2, "0");
+    let hours = koreaTime.getUTCHours().toString().padStart(2, "0");
+    let minutes = koreaTime.getUTCMinutes().toString().padStart(2, "0");
+    let seconds = koreaTime.getUTCSeconds().toString().padStart(2, "0");
+
+    let datetime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
     const roomName = [userEmail, friendEmail].sort().join("-");
 
