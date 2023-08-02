@@ -71,14 +71,14 @@ io.on("connection", (socket) => {
           function (err, rows1, fields) {
             if (!err) {
               socket.to(roomName).emit("message", {
-                a_email: rows1[0].a_email,
-                b_email: rows1[0].b_email,
-                a_name: rows1[0].a_name,
-                b_name: rows1[0].b_name,
-                sender: rows1[0].sender,
+                a_email: userEmail,
+                b_email: friendEmail,
+                a_name: userName,
+                b_name: n_name,
+                sender: userEmail,
 
-                contents: rows1[0].contents,
-                time: rows1[0].time,
+                contents: message,
+                time: datetime,
               });
             } else {
               console.log(err);
