@@ -68,17 +68,17 @@ io.on("connection", (socket) => {
             friendEmail,
           ],
 
-          function (err, rows, fields) {
+          function (err, rows1, fields) {
             if (!err) {
               socket.to(roomName).emit("message", {
-                a_email: string,
-                b_email: string,
-                a_name: string,
-                b_name: string,
-                sender: string,
+                a_email: rows1[0].a_email,
+                b_email: rows1[0].b_email,
+                a_name: rows1[0].a_name,
+                b_name: rows1[0].b_name,
+                sender: rows1[0].sender,
 
-                contents: string,
-                time: string,
+                contents: rows1[0].contents,
+                time: rows1[0].time,
               });
             } else {
               console.log(err);
