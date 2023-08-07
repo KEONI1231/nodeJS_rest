@@ -1,4 +1,4 @@
-const con = require("../db/dbConfig");
+const con = require("../dbConfig/dbConfig.js");
 
 module.exports = function (io) {
   console.log("a user connected");

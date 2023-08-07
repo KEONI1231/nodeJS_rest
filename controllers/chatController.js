@@ -1,4 +1,4 @@
-const con = require("../db/dbConfig");
+const con = require("../dbConfig/dbConfig.js");
 
 exports.getFriends = function (req, res, next) {
   const userEmail = req.query.userEmail;

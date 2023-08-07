@@ -1,4 +1,4 @@
-const con = require("../db/dbConfig");
+const con = require("../dbConfig/dbConfig.js");
 
 exports.createUser = function (req, res, next) {
   const userEmail = req.body["email"];
