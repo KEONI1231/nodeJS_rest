@@ -101,7 +101,6 @@ exports.createChatUser = function (req, res, next) {
 exports.loginChatUser = function (req, res, next) {
   var userEmail = req.body.email;
   var userPW = req.body.pw;
-  console.log(userPw);
 
   con.query(
     "select EXISTS (select * from ChatUser where email = ? and pw = ?) as success;",
