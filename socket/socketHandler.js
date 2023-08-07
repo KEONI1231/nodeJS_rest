@@ -17,10 +17,10 @@ module.exports = function (io) {
       socket.join(roomName); // 이 사용자를 룸에 추가
 
       console.log(`User joined: ${roomName}`);
-      socket.emit("message", {
-        user: "admin",
-        text: "Welcome to " + roomName,
-      });
+      //   socket.emit("message", {
+      //     user: "admin",
+      //     text: "Welcome to " + roomName,
+      //   });
     });
     //"insert into Plan (description, email, checkPlan, startTime, endTime, selectDate) values(?, ?, ?, ?, ?, ?)",
     //    [content, userEmail, check, startTime, endTime, selectDate],
