@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const userController = reequire("../controllers/userController");
+const userController = require("../controllers/userController");
 
 router.post("/todoApp/user/create", userController.createUser);
 router.post("/todoApp/user/login", userController.loginUser);
