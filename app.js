@@ -16,9 +16,9 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(express.json());
 
-server.use("/user", userRouter);
-server.use("/chat", chatRouter);
-server.use("/plan", planRouter);
+server.use("/", userRouter);
+server.use("/", chatRouter);
+server.use("/", planRouter);
 
 socketHandler(io);
 var con = require("./dbConfig/dbConfig.js");
