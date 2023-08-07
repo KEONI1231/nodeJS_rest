@@ -10,3 +10,5 @@ router.post("/small-chat/add-friend", chatController.addFriend);
 router.post("/small-chat/startchatting", chatController.startChatting);
 router.post("/small-chat/getChatList", chatController.getChatList);
 router.get("/get-chat-contents", chatController.getChatContents);
+
+module.exports = router;

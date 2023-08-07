@@ -182,7 +182,7 @@ exports.getChatList = function (req, res, next) {
     }
   );
 };
-exports.getChatContenes = function (req, res, next) {
+exports.getChatContents = function (req, res, next) {
   const userEmail = req.query.userEmail;
   const friendEmail = req.query.friendEmail;
 

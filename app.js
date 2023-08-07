@@ -5,11 +5,11 @@ const socketIo = require("socket.io");
 const server = express();
 const httpServer = http.createServer(server);
 const io = socketIo(httpServer);
-
+const cors = require("cors"); // Add this line
 const userRouter = require("./routes/user");
 const chatRouter = require("./routes/chat");
 const planRouter = require("./routes/plan");
-const socketHandler = require("./routes/socketHandler");
+const socketHandler = require("./socket/socketHandler");
 
 server.use(cors()); // And add this line
 server.use(bodyParser.json());
