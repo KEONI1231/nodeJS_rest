@@ -2,7 +2,7 @@ const con = require("../dbConfig/dbConfig.js");
 
 exports.getFriends = function (req, res, next) {
   const userEmail = req.query.userEmail;
-  const rowFriendsEmailList = {};
+  //const rowFriendsEmailList = {};
   let friendsList = {};
   con.query(
     `
@@ -84,18 +84,48 @@ exports.addFriend = function (req, res, next) {
   const user_email = req.body["userEmail"];
   const search_email = req.body["searchEmail"];
 
+  // JOIN을 사용하여 user_email과 search_email에 해당하는 데이터를 한 번의 쿼리로 가져옵니다.
   con.query(
-    "insert into Friends values(?,?);",
-    [user_email, search_email],
-    function (err, rows, fields) {
-      if (!err) {
-        res.send("success");
+    `
+    SELECT u.email AS user_email, u.device_fcm_token AS user_token, 
+           s.email AS search_email, s.device_fcm_token AS search_token
+    FROM ChatUser u
+    JOIN ChatUser s ON s.email = ?
+    WHERE u.email = ?`,
+    [search_email, user_email],
+    function (err, results) {
+      if (err) {
+        return res.send(err);
+      }
+
+      // 결과가 존재하는지 확인합니다.
+      if (results.length > 0) {
+        const data = results[0];
+
+        // Friends 테이블에 데이터를 삽입합니다.
+        con.query(
+          "INSERT INTO Friends (user_id, friend_id, user_device_fcm_token, friend_device_fcm_token) VALUES (?, ?, ?, ?)",
+          [
+            data.user_email,
+            data.search_email,
+            data.user_token,
+            data.search_token,
+          ],
+          function (err, rows, fields) {
+            if (!err) {
+              res.send("success");
+            } else {
+              res.send(err);
+            }
+          }
+        );
       } else {
-        res.send(err);
+        res.send("User or search user not found");
       }
     }
   );
 };
+
 exports.startChatting = function (req, res, next) {
   const me = req.body["userEmail"];
   const you = req.body["friendEmail"];
