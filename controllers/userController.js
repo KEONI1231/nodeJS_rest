@@ -83,7 +83,7 @@ exports.createChatUser = function (req, res, next) {
         } else {
           // 이메일이 존재하지 않으면
           con.query(
-            "insert into ChatUser values(?,?,?,?);",
+            "insert into ChatUser values(?,?,?,?,?);",
             [
               userEmail,
               trimmedUserStatusMessage,
@@ -95,6 +95,7 @@ exports.createChatUser = function (req, res, next) {
               if (!err) {
                 res.send(req.body);
               } else {
+                console.log(err);
                 res.send("err 발생");
               }
             }
@@ -125,6 +126,7 @@ exports.loginChatUser = function (req, res, next) {
                 pw: rows[0].pw,
                 name: rows[0].name,
                 statusMessage: rows[0].statusMessage,
+                deviceFcmToken: rows[0].device_fcm_token,
               };
               res.send(userdata);
             }
