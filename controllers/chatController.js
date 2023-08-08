@@ -43,6 +43,9 @@ exports.getFriends = function (req, res, next) {
 exports.searchFriends = function (req, res, next) {
   const searchEmail = req.query.searchEmail;
   const userEmail = req.query.userEmail;
+  console.log(userEmail);
+  console.log(searchEmail);
+
   let friendList = {};
   con.query(
     "select * from Friends where user_id = ? and friend_id = ?",
