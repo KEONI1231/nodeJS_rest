@@ -69,6 +69,7 @@ exports.createChatUser = function (req, res, next) {
   const userPw = req.body["pw"];
   const userName = req.body["name"];
   const userStatusMessage = req.body["statusMessage"];
+  const trimmedUserStatusMessage = userStatusMessage.trim();
   const deviceFcmToken = req.body["device_fcm_token"];
   console.log(deviceFcmToken);
   con.query(
@@ -83,7 +84,13 @@ exports.createChatUser = function (req, res, next) {
           // 이메일이 존재하지 않으면
           con.query(
             "insert into ChatUser values(?,?,?,?);",
-            [userEmail, userStatusMessage, userPw, userName, deviceFcmToken],
+            [
+              userEmail,
+              trimmedUserStatusMessage,
+              userPw,
+              userName,
+              deviceFcmToken,
+            ],
             function (err, rows, fields) {
               if (!err) {
                 res.send(req.body);
