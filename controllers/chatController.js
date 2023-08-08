@@ -30,7 +30,7 @@ exports.getFriends = function (req, res, next) {
           res.send(friendsList);
         } else {
           console.log("친구목록 없음");
-          res.sen("친구 목록 없음");
+          res.send("친구 목록 없음");
         }
       } else {
         console.log(err);
