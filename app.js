@@ -21,7 +21,6 @@ server.use("/chat", chatRouter);
 server.use("/plan", planRouter);
 
 socketHandler(io);
-var con = require("./dbConfig/dbConfig.js");
 
 httpServer.listen(3000, () => {
   console.log("!!server is running!!");
@@ -29,21 +28,21 @@ httpServer.listen(3000, () => {
 
 ///rest api코드
 
-server.post("/api/test", function (req, res, next) {
-  const testString = req.body[test];
-  console.log(testString);
-  con.query(
-    "insert into test values(?);",
-    [testString],
-    function (err, rows, fields) {
-      if (!err) {
-        res.send(req.body);
-      } else {
-        res.send("err 발생");
-      }
-    }
-  );
-});
+// server.post("/api/test", function (req, res, next) {
+//   const testString = req.body[test];
+//   console.log(testString);
+//   con.query(
+//     "insert into test values(?);",
+//     [testString],
+//     function (err, rows, fields) {
+//       if (!err) {
+//         res.send(req.body);
+//       } else {
+//         res.send("err 발생");
+//       }
+//     }
+//   );
+// });
 
 //회원가입 코드
 //회원가입 코드
